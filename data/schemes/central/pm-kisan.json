@@ -1,0 +1,186 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "pm-kisan",
+  "name": "PM-KISAN",
+  "full_name": "Pradhan Mantri Kisan Samman Nidhi",
+  "level": "central",
+  "state": null,
+  "summary": "Income support for farming families who own land, paid straight into their bank account.",
+
+  "benefit_value": 6000,
+  "benefit_period": "year",
+  "benefit_note": "Paid as three equal instalments of ₹2,000.",
+  "effort_level": "MEDIUM",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://pmkisan.gov.in/RegistrationFormupdated.aspx",
+  "source_url": "https://pmkisan.gov.in/",
+  "official_video_url": null,
+
+  "documents": [
+    "aadhaar_card",
+    "land_record",
+    "bank_passbook",
+    "mobile_number"
+  ],
+
+  "how_to_apply": [
+    "Go to the PM-KISAN portal and open Farmers Corner.",
+    "Choose New Farmer Registration and fill in your details.",
+    "Complete eKYC — this is mandatory and your application will not proceed without it.",
+    "Your state government checks your land records against what you entered.",
+    "Once approved, instalments are paid directly into your bank account."
+  ],
+
+  "common_pitfalls": [
+    "eKYC is mandatory for every registered farmer. Applications sit unpaid until it is done."
+  ],
+
+  "rules": {
+    "all": [
+      {
+        "id": "owns-agricultural-land",
+        "field": "owns_agricultural_land",
+        "op": "equals",
+        "value": true,
+        "label": "Your family owns agricultural land",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "Your family owns agricultural land, which is what this scheme is for.",
+        "fail_template": "This scheme is only for families who own agricultural land.",
+        "source_quote": "all land holding farmer families"
+      }
+    ],
+
+    "none": [
+      {
+        "id": "excluded-institutional-landholder",
+        "field": "is_institutional_landholder",
+        "op": "equals",
+        "value": true,
+        "label": "Land held by an institution rather than a person",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "Your land is held in your own name, not by an institution.",
+        "fail_template": "This scheme excludes land held by an institution rather than by a person.",
+        "source_quote": "All Institutional Land holders"
+      },
+      {
+        "id": "excluded-constitutional-post",
+        "field": "holds_constitutional_post",
+        "op": "equals",
+        "value": true,
+        "label": "Holds or held a constitutional post",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You do not hold a constitutional post, so this exclusion does not apply.",
+        "fail_template": "This scheme excludes anyone holding or formerly holding a constitutional post, including MPs, MLAs, Mayors and District Panchayat Chairpersons.",
+        "source_quote": "Persons holding constitutional posts or serving/former elected officials (Members of Parliament, State Assemblies, Mayors, District Panchayat Chairpersons)"
+      },
+      {
+        "_comment": "Nested group: the exclusion applies to government employees EXCEPT Group D / Class IV / Multi Tasking Staff. Both conditions must hold for the exclusion to bite.",
+        "all": [
+          {
+            "id": "excluded-government-employee",
+            "field": "is_government_employee",
+            "op": "equals",
+            "value": true,
+            "label": "Government or PSU employee",
+            "fixable": false,
+            "fix_hint": null,
+            "pass_template": "You are not a serving or retired government employee.",
+            "fail_template": "This scheme excludes serving and retired government and public sector employees, other than Group D and Multi Tasking Staff.",
+            "source_quote": "Government employees and PSU staff (excluding Group D/Class IV/Multi Tasking Staff)"
+          },
+          {
+            "id": "excluded-government-employee-grade",
+            "field": "government_employee_grade",
+            "op": "not_in",
+            "value": ["group_d_mts"],
+            "label": "Not Group D or Multi Tasking Staff",
+            "fixable": false,
+            "fix_hint": null,
+            "pass_template": "Group D and Multi Tasking Staff are not covered by the government employee exclusion.",
+            "fail_template": "Your grade falls under the government employee exclusion.",
+            "source_quote": "excluding Group D/Class IV/Multi Tasking Staff"
+          }
+        ]
+      },
+      {
+        "_comment": "Nested group: pensioners drawing ₹10,000 or more a month are excluded, again except Group D / Multi Tasking Staff.",
+        "all": [
+          {
+            "id": "excluded-high-pension",
+            "field": "monthly_pension_amount",
+            "op": "gte",
+            "value": 10000,
+            "label": "Monthly pension of ₹10,000 or more",
+            "fixable": false,
+            "fix_hint": null,
+            "pass_template": "Your monthly pension is {user_value}, below the {threshold} cut-off for this exclusion.",
+            "fail_template": "This scheme excludes retired pensioners drawing {threshold} a month or more, and yours is {user_value}.",
+            "source_quote": "Retired pensioners with monthly pensions of ₹10,000 or more"
+          },
+          {
+            "id": "excluded-high-pension-grade",
+            "field": "government_employee_grade",
+            "op": "not_in",
+            "value": ["group_d_mts"],
+            "label": "Not Group D or Multi Tasking Staff",
+            "fixable": false,
+            "fix_hint": null,
+            "pass_template": "Group D and Multi Tasking Staff pensioners are not covered by the pension exclusion.",
+            "fail_template": "Your grade falls under the pension exclusion.",
+            "source_quote": "excluding Group D/Class IV/Multi Tasking Staff"
+          }
+        ]
+      },
+      {
+        "id": "excluded-income-tax-payer",
+        "field": "paid_income_tax_last_year",
+        "op": "equals",
+        "value": true,
+        "label": "Paid income tax last assessment year",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You did not pay income tax in the last assessment year.",
+        "fail_template": "This scheme excludes anyone who paid income tax in the last assessment year.",
+        "source_quote": "All Persons who paid Income Tax in last assessment year"
+      },
+      {
+        "id": "excluded-registered-professional",
+        "field": "is_registered_professional",
+        "op": "equals",
+        "value": true,
+        "label": "Registered practising professional",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are not a registered practising professional.",
+        "fail_template": "This scheme excludes registered practising professionals such as doctors, engineers, lawyers, chartered accountants and architects.",
+        "source_quote": "Professionals like Doctors, Engineers, Lawyers, Chartered Accountants, and Architects registered with Professional bodies"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Benefit, eligibility and all six exclusions were taken from https://pmkisan.gov.in/ on 2026-08-09. Every source_quote is wording from that page.",
+    "NO LAND CEILING. The scheme covers 'all land holding farmer families'. An earlier 2-hectare limit is no longer in force. Do not add a land size rule without a quote from the official page saying otherwise.",
+    "TO CONFIRM: the documents list. The portal homepage does not state one. aadhaar_card and mobile_number follow from mandatory eKYC, land_record from the landholding requirement, bank_passbook from direct transfer — but confirm against the scheme guidelines before marking this verified.",
+    "TO CONFIRM: effort_level is MEDIUM on the assumption that a land record must be collected first. If registration works end to end online with no document collected beforehand, change it to EASY.",
+    "TO CONFIRM: how_to_apply steps are written from the portal's Farmers Corner links, not from walking through the form. Walk it once.",
+    "TO ADD: more common_pitfalls. Only the eKYC one has a source so far.",
+    "The official FAQ at https://pmkisan.gov.in/Documents/RevisedFAQ.pdf is a scanned PDF and could not be read automatically. Someone needs to open it by hand — it likely settles the documents list.",
+    "The scheme is a family entitlement: husband, wife and minor children count as one family. Our profile is per-adult, so two spouses filling separate profiles would each see this scheme. Worth a note on the card."
+  ]
+}

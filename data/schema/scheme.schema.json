@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/rameshkumark24/KnowYourScheme/data/schema/scheme.schema.json",
+  "title": "Welfare scheme",
+  "description": "One government scheme. See docs/scheme-format.md. Used by the validation script (build step 26) to block a bad file before merge.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "required": [
+    "id", "name", "full_name", "level", "state", "summary",
+    "benefit_value", "benefit_period", "effort_level", "official_fee",
+    "is_rolling", "application_start", "application_end", "scheme_status",
+    "application_url", "source_url", "documents", "how_to_apply",
+    "common_pitfalls", "rules",
+    "curation_status", "last_verified", "verified_by", "checked_by"
+  ],
+
+  "properties": {
+    "$schema": { "type": "string" },
+
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "kebab-case, unique, must match the filename"
+    },
+    "name": { "type": "string", "minLength": 1 },
+    "full_name": { "type": "string", "minLength": 1 },
+    "level": { "enum": ["central", "state"] },
+    "state": { "type": ["string", "null"] },
+    "summary": { "type": "string", "minLength": 1 },
+
+    "benefit_value": { "type": ["number", "null"], "minimum": 0 },
+    "benefit_period": { "enum": ["year", "month", "one_time"] },
+    "benefit_note": { "type": ["string", "null"] },
+    "effort_level": { "enum": ["EASY", "MEDIUM", "HARD"] },
+    "official_fee": { "type": "number", "minimum": 0 },
+
+    "is_rolling": { "type": "boolean" },
+    "application_start": { "type": ["string", "null"], "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "application_end": { "type": ["string", "null"], "format": "date", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "scheme_status": { "enum": ["active", "closed", "superseded"] },
+
+    "application_url": { "type": "string", "format": "uri", "pattern": "^https://" },
+    "source_url": { "type": "string", "format": "uri", "pattern": "^https://" },
+    "official_video_url": { "type": ["string", "null"], "format": "uri" },
+
+    "documents": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "description": "Ids from data/documents.json. The validation script checks each one exists."
+    },
+    "how_to_apply": { "type": "array", "items": { "type": "string" } },
+    "common_pitfalls": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "General to the scheme. Never a diagnosis of one person's rejection."
+    },
+
+    "rules": { "$ref": "#/definitions/ruleGroup" },
+
+    "curation_status": { "enum": ["draft", "verified"] },
+    "last_verified": { "type": ["string", "null"], "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "verified_by": { "type": ["string", "null"] },
+    "checked_by": { "type": ["string", "null"] },
+    "curation_notes": { "type": "array", "items": { "type": "string" } }
+  },
+
+  "allOf": [
+    {
+      "description": "A verified scheme needs a real verification date and two different people.",
+      "if": { "properties": { "curation_status": { "const": "verified" } } },
+      "then": {
+        "properties": {
+          "last_verified": { "type": "string" },
+          "verified_by": { "type": "string", "minLength": 1 },
+          "checked_by": { "type": "string", "minLength": 1 }
+        },
+        "required": ["last_verified", "verified_by", "checked_by"]
+      }
+    },
+    {
+      "description": "A non-rolling scheme must state both ends of its window.",
+      "if": { "properties": { "is_rolling": { "const": false } } },
+      "then": {
+        "properties": {
+          "application_start": { "type": "string" },
+          "application_end": { "type": "string" }
+        }
+      }
+    },
+    {
+      "description": "A state scheme must say which state.",
+      "if": { "properties": { "level": { "const": "state" } } },
+      "then": { "properties": { "state": { "type": "string", "minLength": 1 } } }
+    }
+  ],
+
+  "definitions": {
+    "ruleGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "_comment": { "type": "string" },
+        "all": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/ruleNode" } },
+        "any": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/ruleNode" } },
+        "none": { "type": "array", "minItems": 1, "items": { "$ref": "#/definitions/ruleNode" } }
+      }
+    },
+
+    "ruleNode": {
+      "oneOf": [
+        { "$ref": "#/definitions/criterion" },
+        { "$ref": "#/definitions/ruleGroup" }
+      ]
+    },
+
+    "criterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id", "field", "op", "value", "label",
+        "fixable", "pass_template", "fail_template", "source_quote"
+      ],
+      "properties": {
+        "_comment": { "type": "string" },
+        "id": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "field": {
+          "type": "string",
+          "description": "Must appear in docs/profile-fields.md. The validation script enforces this — it is the check that stops a rule reading a field the form never collects."
+        },
+        "op": { "enum": ["equals", "not_equals", "lt", "lte", "gt", "gte", "in", "not_in", "includes"] },
+        "value": {},
+        "label": { "type": "string", "minLength": 1 },
+        "fixable": { "type": "boolean" },
+        "fix_hint": { "type": ["string", "null"] },
+        "pass_template": { "type": "string", "minLength": 1 },
+        "fail_template": { "type": "string", "minLength": 1 },
+        "source_quote": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The wording on the official page this rule came from. This is what makes a pull request diff reviewable."
+        }
+      },
+      "allOf": [
+        {
+          "description": "If it is fixable, say how.",
+          "if": { "properties": { "fixable": { "const": true } } },
+          "then": {
+            "properties": { "fix_hint": { "type": "string", "minLength": 1 } },
+            "required": ["fix_hint"]
+          }
+        },
+        {
+          "description": "in / not_in take a list.",
+          "if": { "properties": { "op": { "enum": ["in", "not_in"] } } },
+          "then": { "properties": { "value": { "type": "array", "minItems": 1 } } }
+        },
+        {
+          "description": "Numeric comparisons take a number.",
+          "if": { "properties": { "op": { "enum": ["lt", "lte", "gt", "gte"] } } },
+          "then": { "properties": { "value": { "type": "number" } } }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "_comment": "Canonical document names. A scheme's documents[] may only use ids from this list, so the checklist screen can de-duplicate across schemes ('these 5 documents unlock 12 schemes'). Add an id here before using it in a scheme file.",
+  "documents": [
+    {
+      "id": "aadhaar_card",
+      "label": "Aadhaar card",
+      "note": "The card is shown at the office or uploaded to the official portal. We never ask for or store the number.",
+      "where_to_get": "Any Aadhaar Seva Kendra, or download from uidai.gov.in"
+    },
+    {
+      "id": "bank_passbook",
+      "label": "Bank passbook or account details",
+      "note": "The account must be in the applicant's own name for a direct transfer to arrive.",
+      "where_to_get": "Your bank branch"
+    },
+    {
+      "id": "land_record",
+      "label": "Land record (chitta / adangal / patta)",
+      "note": "Must show the land in the applicant's name.",
+      "where_to_get": "Village Administrative Officer, or eservices.tn.gov.in"
+    },
+    {
+      "id": "income_certificate",
+      "label": "Income certificate",
+      "note": "Usually valid for one year. An expired certificate is the most common reason an application is returned.",
+      "where_to_get": "e-Sevai centre or Taluk office"
+    },
+    {
+      "id": "community_certificate",
+      "label": "Community certificate",
+      "where_to_get": "e-Sevai centre or Taluk office"
+    },
+    {
+      "id": "ration_card",
+      "label": "Ration card",
+      "where_to_get": "Taluk Supply Office"
+    },
+    {
+      "id": "residence_proof",
+      "label": "Proof of address",
+      "where_to_get": "e-Sevai centre, or any accepted utility bill"
+    },
+    {
+      "id": "passport_photo",
+      "label": "Passport size photograph"
+    },
+    {
+      "id": "mobile_number",
+      "label": "A mobile number you can receive OTPs on",
+      "note": "Needed for eKYC on most central portals."
+    }
+  ]
+}
