@@ -1,0 +1,84 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-muthulakshmi-reddy-intercaste-marriage",
+  "name": "Inter-Caste Marriage Assistance",
+  "full_name": "Dr. Muthulakshmi Reddy Ninaivu Inter-Caste Marriage Assistance Scheme",
+  "level": "state",
+  "state": "TN",
+  "summary": "Money and a gold coin for couples marrying across caste. No income limit.",
+
+  "benefit_value": 25000,
+  "benefit_period": "one_time",
+  "benefit_type": "grant",
+  "benefit_note": "₹25,000 — ₹15,000 by direct transfer and ₹10,000 as a National Savings Certificate — with an 8 gram 22 carat gold coin. ₹50,000 in total for graduates and diploma holders.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/marriage-assistance-schemes",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/marriage-assistance-schemes",
+  "official_video_url": null,
+
+  "documents": [
+    "marriage_proof",
+    "community_certificate",
+    "bank_passbook",
+    "residence_proof"
+  ],
+
+  "how_to_apply": [
+    "Collect proof of the marriage and community certificates for both partners.",
+    "Apply through the Social Welfare Office for your district."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "marriage-is-inter-caste",
+        "field": "is_intercaste_marriage",
+        "op": "equals",
+        "value": true,
+        "label": "The marriage is across caste",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This assistance is for couples marrying across caste.",
+        "fail_template": "This assistance is only for couples marrying across caste.",
+        "source_quote": "Dr. MUTHULAKSHMI REDDY NINAIVU INTER-CASTE MARRIAGE ASSISTANCE SCHEME"
+      },
+      {
+        "id": "passed-class-10",
+        "field": "education_level",
+        "op": "in",
+        "value": ["secondary", "higher_secondary", "diploma", "graduate", "postgraduate"],
+        "label": "Passed Class 10",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You have passed Class 10, which this scheme requires.",
+        "fail_template": "This scheme requires the bride to have passed Class 10.",
+        "source_quote": "10th Std pass"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department marriage assistance page on 2026-08-09.",
+    "NO INCOME CEILING — stated explicitly on the official page.",
+    "NOT MODELLED: the two categories. The page describes Category I as SC/ST marrying anyone, and Category II as a forward or unreserved person marrying someone from BC or MBC. Those are different combinations of two people's castes, and the profile only holds one person's. Expressing this properly needs a partner_category field — decide whether that is worth collecting before this ships.",
+    "The Class 10 condition is written as a rule, but the page also says 'no minimum educational qualification stipulated' for higher categories. Those two statements conflict as extracted. Resolve against the government order before marking this verified — as written, the rule may produce false negatives.",
+    "NOT MODELLED: that a marriage is actually taking place. Same false positive as the other marriage assistance schemes.",
+    "NOT MODELLED: the ₹50,000 graduate rate.",
+    "SENSITIVE. Caste and marriage are both sensitive; is_intercaste_marriage must be asked inside this scheme's own flow only."
+  ]
+}

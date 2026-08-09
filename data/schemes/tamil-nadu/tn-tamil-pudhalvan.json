@@ -1,0 +1,119 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-tamil-pudhalvan",
+  "name": "Tamil Pudhalvan",
+  "full_name": "Tamil Pudhalvan Scheme",
+  "level": "state",
+  "state": "TN",
+  "summary": "₹1,000 a month for boys who went to a government or aided Tamil medium school and are now in college.",
+
+  "benefit_value": 1000,
+  "benefit_period": "month",
+  "benefit_type": "grant",
+  "benefit_note": "Paid by direct transfer until he finishes his first higher education course. There is no limit on how many boys in one family can receive it.",
+  "effort_level": "MEDIUM",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/tamil-pudhalvan",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/tamil-pudhalvan",
+  "official_video_url": null,
+
+  "documents": [
+    "bonafide_certificate",
+    "bank_passbook",
+    "aadhaar_card"
+  ],
+
+  "how_to_apply": [
+    "Enrol in a recognised degree, diploma or ITI course.",
+    "Your college registers you for the transfer.",
+    "The college certifies that you are still studying twice a year, on 30 June and 31 December."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "student-is-a-boy",
+        "field": "gender",
+        "op": "equals",
+        "value": "male",
+        "label": "Boy student",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This scheme is for boy students.",
+        "fail_template": "This scheme is for boy students. Girls have a matching scheme called Pudhumai Penn.",
+        "source_quote": "All boy students who studied from Classes 6 to 12 in Government schools and Government aided schools in tamil medium"
+      },
+      {
+        "id": "studied-6-to-12-in-government-or-aided-school",
+        "field": "school_type_6_to_12",
+        "op": "in",
+        "value": ["government", "government_aided"],
+        "label": "Studied classes 6 to 12 in a government or government aided school",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You studied classes 6 to 12 in a school this scheme covers.",
+        "fail_template": "This scheme is for boys who studied classes 6 to 12 in a government or government aided school.",
+        "source_quote": "All boy students who studied from Classes 6 to 12 in Government schools and Government aided schools in tamil medium"
+      },
+      {
+        "id": "studied-in-tamil-medium",
+        "field": "school_medium",
+        "op": "equals",
+        "value": "tamil",
+        "label": "Studied in Tamil medium",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You studied in Tamil medium, which this scheme requires.",
+        "fail_template": "This scheme is for boys who studied in Tamil medium.",
+        "source_quote": "Government schools and Government aided schools in tamil medium"
+      },
+      {
+        "id": "enrolled-in-eligible-course",
+        "field": "current_course_type",
+        "op": "in",
+        "value": ["ug_degree", "diploma", "iti"],
+        "label": "Studying an undergraduate degree, diploma or ITI course",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are on a course this scheme covers.",
+        "fail_template": "This scheme covers undergraduate degree, diploma and ITI courses.",
+        "source_quote": "undergraduate degree, diploma and ITI courses"
+      },
+      {
+        "id": "is-first-higher-education",
+        "field": "is_first_higher_education",
+        "op": "equals",
+        "value": true,
+        "label": "This is your first course after school",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This is your first course after school, which is what the scheme covers.",
+        "fail_template": "This scheme only covers your first course of higher education.",
+        "source_quote": "only first course of higher education will be considered as an eligible factor"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department page on 2026-08-09. Every source_quote is wording from that page.",
+    "NOT IDENTICAL TO PUDHUMAI PENN. Two real differences, easy to miss when copying the file: this scheme also accepts GOVERNMENT AIDED schools, and it requires TAMIL MEDIUM. Pudhumai Penn says only 'Government schools' with no medium condition. Do not harmonise them.",
+    "TO CONFIRM: the exact scope of 'in tamil medium'. The sentence reads 'Government schools and Government aided schools in tamil medium', which could mean the medium condition applies to both school types or only to aided schools. It is written here as applying to both, which is the stricter reading — so the risk is a false negative rather than a false positive. Settle it against the government order.",
+    "NO INCOME LIMIT stated on the official page.",
+    "Modelled on the student's own profile, same as Pudhumai Penn.",
+    "TO CONFIRM: the documents list. The official page names none."
+  ]
+}

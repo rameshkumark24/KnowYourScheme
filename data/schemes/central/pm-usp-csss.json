@@ -1,0 +1,125 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "pm-usp-csss",
+  "name": "PM-USP CSSS Scholarship",
+  "full_name": "PM Uchchatar Shiksha Protsahan — Central Sector Scheme of Scholarship for College and University Students",
+  "level": "central",
+  "state": null,
+  "summary": "A merit scholarship for degree students who finished in the top 20% of their Class 12 board stream.",
+
+  "benefit_value": 12000,
+  "benefit_period": "year",
+  "benefit_type": "grant",
+  "benefit_note": "₹12,000 a year for the first three years of a degree, and ₹20,000 a year at postgraduate level. Students on five-year integrated or professional courses get ₹20,000 a year in the 4th and 5th year.",
+  "effort_level": "EASY",
+  "official_fee": 0,
+
+  "is_rolling": false,
+  "application_start": "2026-06-01",
+  "application_end": "2026-10-31",
+  "scheme_status": "active",
+
+  "application_url": "https://scholarships.gov.in/",
+  "source_url": "https://scholarships.gov.in/public/schemeGuidelines/CSSS_GUIDLINES_07022024_updated.pdf",
+  "official_video_url": null,
+
+  "documents": [
+    "class_12_marksheet",
+    "income_certificate",
+    "bank_passbook",
+    "aadhaar_card"
+  ],
+
+  "how_to_apply": [
+    "Register on the National Scholarship Portal — the whole application is online.",
+    "Enter your Class 12 board result and your college's AISHE code.",
+    "Upload your income certificate. Fresh applicants need one; renewals do not.",
+    "Your institution verifies the application on the portal."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "class-12-percentile",
+        "field": "class_12_percentile",
+        "op": "gt",
+        "value": 80,
+        "label": "Above the 80th percentile in Class 12",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are at the {user_value}th percentile, above the {threshold}th percentile this scholarship needs.",
+        "fail_template": "You are at the {user_value}th percentile, and this scholarship needs above the {threshold}th percentile of successful candidates in your stream.",
+        "source_quote": "Students who are above 80th percentile of successful candidates in the relevant stream from the respective Board of Examination in Class XII of 10+2 pattern or equivalent"
+      },
+      {
+        "id": "on-a-degree-course",
+        "field": "current_course_type",
+        "op": "in",
+        "value": ["ug_degree", "pg_degree"],
+        "label": "On a regular degree course, not a diploma",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are on a degree course, which this scholarship covers.",
+        "fail_template": "This scholarship is for regular degree courses. Diploma courses are not covered.",
+        "source_quote": "Pursuing regular degree courses and not correspondence or distance mode or pursuing Diploma courses"
+      },
+      {
+        "id": "course-is-regular-mode",
+        "field": "course_mode",
+        "op": "equals",
+        "value": "regular",
+        "label": "Studying in regular mode",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are studying in regular mode, which this scholarship requires.",
+        "fail_template": "This scholarship does not cover correspondence or distance learning.",
+        "source_quote": "not correspondence or distance mode"
+      },
+      {
+        "id": "family-income-limit",
+        "field": "annual_income",
+        "op": "lte",
+        "value": 450000,
+        "label": "Family income of ₹4,50,000 a year or less",
+        "fixable": true,
+        "fix_hint": "Fresh applicants need an income certificate. Get one from the e-Sevai centre — renewals do not need it.",
+        "pass_template": "Your family income is ₹{user_value}, within the ₹{threshold} limit.",
+        "fail_template": "Your family income is ₹{user_value}, above the ₹{threshold} limit for this scholarship.",
+        "source_quote": "Students with gross parental/family income upto ₹ 4.5 lakh per annum are eligible for scholarship under the scheme."
+      }
+    ],
+
+    "none": [
+      {
+        "id": "already-on-another-scholarship",
+        "field": "receiving_other_scholarship",
+        "op": "equals",
+        "value": true,
+        "label": "Already receiving another scholarship or fee waiver",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are not on another merit or state scholarship.",
+        "fail_template": "This scholarship cannot be combined with another merit scholarship, a state scholarship, a fee waiver or a reimbursement scheme.",
+        "source_quote": "Not availing benefit of any other merit scholarship schemes, State run scholarship schemes, fee waiver, reimbursement scheme."
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Rules and amounts come from the official CSSS guidelines PDF (CSSS_GUIDLINES_07022024_updated.pdf), downloaded from the National Scholarship Portal and read on 2026-08-09. Dates come from the portal homepage.",
+    "THIS SCHEME CONFLICTS WITH PUDHUMAI PENN AND TAMIL PUDHALVAN. CSSS excludes anyone on a 'State run scholarship scheme'; the two Tamil Nadu schemes explicitly allow holding other scholarships. So a Pudhumai Penn recipient appears to be disqualified from CSSS, but not the other way round. This is exactly the scheme-interaction problem behind the decision not to build a benefit stacking optimiser. The card should say the conflict exists and let the user decide — it must not pick for them.",
+    "TO CONFIRM: the application window. The portal homepage gives a student application closing date of 31-10-2026, while the All-Scholarships listing shows renewal applications closing 30-09-2026. Those are probably the fresh and renewal windows respectively. The fresh window is used here. Confirm both before this ships, because is_rolling is false and a wrong end date silently hides the scheme.",
+    "IGNORE the ₹10,000 figure in section 7 of the guidelines. It is a historical rate for academic year 2021-22, not the current one. The current rate is ₹12,000.",
+    "The 80th percentile is of SUCCESSFUL CANDIDATES IN THE RELEVANT STREAM for the student's own board — not a raw mark percentage. The profile question has to be worded carefully or students will answer with their percentage and get a wrong result.",
+    "TO CONFIRM: the documents list. The guidelines mention an income certificate for fresh applicants and a bank account in the student's own name; the other two are inferred.",
+    "This is the first scheme in the corpus with a real application window and the first with effort_level EASY."
+  ]
+}

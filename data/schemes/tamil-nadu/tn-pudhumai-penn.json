@@ -1,0 +1,107 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-pudhumai-penn",
+  "name": "Pudhumai Penn",
+  "full_name": "Moovalur Ramamirtham Ammaiyar Ninaivu Higher Education Assurance Scheme",
+  "level": "state",
+  "state": "TN",
+  "summary": "₹1,000 a month for girls who went to a government school and are now in college.",
+
+  "benefit_value": 1000,
+  "benefit_period": "month",
+  "benefit_type": "grant",
+  "benefit_note": "Paid by direct transfer until she finishes her first higher education course. There is no limit on how many girls in one family can receive it.",
+  "effort_level": "MEDIUM",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/pudhumai-penn",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/pudhumai-penn",
+  "official_video_url": null,
+
+  "documents": [
+    "bonafide_certificate",
+    "bank_passbook",
+    "aadhaar_card"
+  ],
+
+  "how_to_apply": [
+    "Enrol in a recognised degree, diploma or ITI course.",
+    "Your college registers you and opens a zero balance bank account for the transfer.",
+    "The college certifies that you are still studying twice a year, on 30 June and 31 December."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "student-is-a-girl",
+        "field": "gender",
+        "op": "equals",
+        "value": "female",
+        "label": "Girl student",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This scheme is for girl students.",
+        "fail_template": "This scheme is for girl students. Boys have a matching scheme called Tamil Pudhalvan.",
+        "source_quote": "All girl students who studied from Classes 6 to 12 in Government schools"
+      },
+      {
+        "id": "studied-6-to-12-in-government-school",
+        "field": "school_type_6_to_12",
+        "op": "equals",
+        "value": "government",
+        "label": "Studied classes 6 to 12 in a government school",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You studied classes 6 to 12 in a government school, which is what this scheme is for.",
+        "fail_template": "This scheme is only for girls who studied classes 6 to 12 in a government school.",
+        "source_quote": "All girl students who studied from Classes 6 to 12 in Government schools"
+      },
+      {
+        "id": "enrolled-in-eligible-course",
+        "field": "current_course_type",
+        "op": "in",
+        "value": ["ug_degree", "diploma", "iti"],
+        "label": "Studying an undergraduate degree, diploma or ITI course",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are on a course this scheme covers.",
+        "fail_template": "This scheme covers undergraduate degree, diploma and ITI courses.",
+        "source_quote": "till the uninterrupted completion of their undergraduate degree, diploma and ITI courses"
+      },
+      {
+        "id": "is-first-higher-education",
+        "field": "is_first_higher_education",
+        "op": "equals",
+        "value": true,
+        "label": "This is your first course after school",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This is your first course after school, which is what the scheme covers.",
+        "fail_template": "This scheme only covers your first course of higher education.",
+        "source_quote": "only first course of higher education will be considered as an eligible factor"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department page on 2026-08-09. Every source_quote is wording from that page.",
+    "NO INCOME LIMIT. The official page states none. Do not add one — several secondary write-ups claim an income ceiling that the department page does not mention.",
+    "Girls already receiving another scholarship are still eligible: 'The girl students availing other scholarships are also eligible to enroll in this scheme.' That is the opposite of the PM-USP CSSS rule, which disqualifies anyone on a state scholarship. See the note in pm-usp-csss.json.",
+    "MODELLED ON THE STUDENT'S OWN PROFILE, not the parent's. College students are usually 18 or over, so they can hold a profile themselves. A 17-year-old first-year would need the parent route, which needs per-child rule evaluation — not built yet.",
+    "TO CONFIRM: effort_level. MEDIUM assumes the college handles registration. If the student has to apply somewhere herself, it may be higher.",
+    "TO CONFIRM: the documents list. The official page names none. The three listed follow from the stated process."
+  ]
+}

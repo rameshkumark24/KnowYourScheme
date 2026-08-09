@@ -75,6 +75,34 @@ biggest cause of abandonment.
 The last two are read only by the Girl Child Protection Scheme. Ask them **inside that
 scheme's flow**, not in the general wizard — see the note on sensitive fields below.
 
+## Education and study
+
+Read by Pudhumai Penn, Tamil Pudhalvan and the PM-USP scholarship. Ask these only when the
+user says they are studying, or has a child who is.
+
+| Field | Type | Values |
+| --- | --- | --- |
+| `school_type_6_to_12` | enum | `government` · `government_aided` · `private` · `mixed` |
+| `school_medium` | enum | `tamil` · `english` · `other` |
+| `current_course_type` | enum | `ug_degree` · `pg_degree` · `diploma` · `iti` · `none` |
+| `course_mode` | enum | `regular` · `distance` · `correspondence` |
+| `is_first_higher_education` | boolean | This is the first course taken after school |
+| `class_12_percentile` | number | Percentile among successful candidates in the same stream and board — **not** a mark percentage |
+| `receiving_other_scholarship` | boolean | Any other merit or state scholarship, fee waiver or reimbursement |
+
+`class_12_percentile` is the one to be careful with. A student who reads the question quickly
+will type their marks percentage, and a wrong answer here silently changes the verdict. Word
+the question, and the help text under it, with that in mind.
+
+## Sensitive circumstances
+
+| Field | Type | Read by |
+| --- | --- | --- |
+| `is_orphan` | boolean | Marriage Assistance for Orphan Girls |
+| `is_intercaste_marriage` | boolean | Inter-Caste Marriage Assistance |
+
+Both follow the sensitive-field rules below. Neither goes in the general wizard.
+
 ## Tier 3 — the exclusion screen
 
 Six of PM-KISAN's rules read these, and most central schemes reuse them. Ask them as **one
@@ -127,9 +155,9 @@ See [trace-format.md](trace-format.md) for how `UNKNOWN` changes the verdict.
 
 ## Sensitive fields
 
-Some schemes are gated on facts nobody should be asked casually. `parent_sterilised` and
-`parent_sterilisation_age` are the first, and there will be more — disability, widowhood,
-caste, HIV status all appear in real eligibility rules.
+Some schemes are gated on facts nobody should be asked casually. `parent_sterilised`,
+`parent_sterilisation_age`, `is_orphan` and `is_intercaste_marriage` are the ones so far, and
+there will be more — disability, widowhood and HIV status all appear in real eligibility rules.
 
 Three rules for these:
 

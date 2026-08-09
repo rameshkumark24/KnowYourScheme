@@ -1,0 +1,83 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-annai-therasa-orphan-girls-marriage",
+  "name": "Marriage Assistance for Orphan Girls",
+  "full_name": "Annai Therasa Ninaivu Marriage Assistance Scheme for Orphan Girls",
+  "level": "state",
+  "state": "TN",
+  "summary": "Money and a gold coin towards the marriage of an orphan girl. No income limit.",
+
+  "benefit_value": 25000,
+  "benefit_period": "one_time",
+  "benefit_type": "grant",
+  "benefit_note": "₹25,000 with an 8 gram 22 carat gold coin. ₹50,000 for graduates.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/marriage-assistance-schemes",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/marriage-assistance-schemes",
+  "official_video_url": null,
+
+  "documents": [
+    "marriage_proof",
+    "bank_passbook",
+    "residence_proof"
+  ],
+
+  "how_to_apply": [
+    "Collect proof of the marriage and proof of your circumstances.",
+    "Apply through the Social Welfare Office for your district."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "applicant-is-an-orphan",
+        "field": "is_orphan",
+        "op": "equals",
+        "value": true,
+        "label": "The bride is an orphan",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This assistance is for orphan girls getting married.",
+        "fail_template": "This assistance is for orphan girls getting married.",
+        "source_quote": "ANNAI THERASA NINAIVU MARRIAGE ASSISTANCE SCHEME FOR ORPHAN GIRLS"
+      },
+      {
+        "id": "applicant-is-a-woman",
+        "field": "gender",
+        "op": "equals",
+        "value": "female",
+        "label": "The applicant is the bride",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This assistance is claimed by the bride.",
+        "fail_template": "This assistance is claimed by the bride herself.",
+        "source_quote": "MARRIAGE ASSISTANCE SCHEME FOR ORPHAN GIRLS"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department marriage assistance page on 2026-08-09.",
+    "NO INCOME CEILING and NO EDUCATIONAL QUALIFICATION — both stated explicitly on the official page.",
+    "TO CONFIRM: how the department defines an orphan for this scheme, and what proves it. `is_orphan` is a plain boolean in the profile, which is almost certainly cruder than the official definition.",
+    "SENSITIVE FIELD. is_orphan must never be asked in the general wizard — only inside this scheme's own flow, with a visible reason and an easy skip. See docs/profile-fields.md.",
+    "NOT MODELLED: that a marriage is actually taking place. Same false positive as the other marriage assistance schemes.",
+    "NOT MODELLED: the ₹50,000 graduate rate.",
+    "TO CONFIRM: minimum age of the bride, and the documents list. Neither is on the official page."
+  ]
+}

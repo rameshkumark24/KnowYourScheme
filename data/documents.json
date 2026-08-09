@@ -80,6 +80,17 @@
       "id": "marriage_proof",
       "label": "Marriage invitation or marriage certificate",
       "where_to_get": "Registrar of Marriages"
+    },
+    {
+      "id": "class_12_marksheet",
+      "label": "Class 12 marksheet",
+      "where_to_get": "Your school, or your board's results portal"
+    },
+    {
+      "id": "bonafide_certificate",
+      "label": "Bonafide certificate from your college",
+      "note": "Confirms you are currently enrolled. Some schemes need it renewed twice a year.",
+      "where_to_get": "Your college office"
     }
   ]
 }

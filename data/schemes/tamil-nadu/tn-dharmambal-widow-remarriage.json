@@ -1,0 +1,83 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-dharmambal-widow-remarriage",
+  "name": "Widow Remarriage Assistance",
+  "full_name": "Dr. Dharmambal Ammaiyar Ninaivu Widow Remarriage Assistance Scheme",
+  "level": "state",
+  "state": "TN",
+  "summary": "Money and a gold coin for a widow who remarries. No income limit.",
+
+  "benefit_value": 25000,
+  "benefit_period": "one_time",
+  "benefit_type": "grant",
+  "benefit_note": "₹15,000 by direct transfer and ₹10,000 as a National Savings Certificate, with an 8 gram 22 carat gold coin. ₹50,000 in total for graduates and diploma holders — ₹30,000 by transfer and ₹20,000 as a certificate.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/marriage-assistance-schemes",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswoman-welfare/marriage-assistance-schemes",
+  "official_video_url": null,
+
+  "documents": [
+    "death_certificate",
+    "marriage_proof",
+    "bank_passbook",
+    "residence_proof"
+  ],
+
+  "how_to_apply": [
+    "Collect the death certificate of your late husband and proof of the remarriage.",
+    "Apply through the Social Welfare Office for your district."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "applicant-is-a-widow",
+        "field": "marital_status",
+        "op": "equals",
+        "value": "widowed",
+        "label": "The applicant is a widow",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This assistance is for widows who remarry.",
+        "fail_template": "This assistance is for widows who remarry.",
+        "source_quote": "Dr. DHARMAMBAL AMMAIYAR NINAIVU WIDOW REMARRIAGE ASSISTANCE SCHEME"
+      },
+      {
+        "id": "applicant-is-a-woman",
+        "field": "gender",
+        "op": "equals",
+        "value": "female",
+        "label": "The applicant is a woman",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This assistance is claimed by the woman remarrying.",
+        "fail_template": "This assistance is claimed by the widow who is remarrying.",
+        "source_quote": "WIDOW REMARRIAGE ASSISTANCE SCHEME"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department marriage assistance page on 2026-08-09.",
+    "NO INCOME CEILING and NO EDUCATIONAL QUALIFICATION. The official page says both explicitly: 'no income ceiling' and 'no educational qualification prescribed'. Do not add either.",
+    "NOT MODELLED: that a remarriage is actually taking place. Nothing in the profile captures an upcoming wedding, so this matches every widow in Tamil Nadu. Same false positive as the other marriage assistance schemes — they all need either a profile field or a clear note on the card before shipping.",
+    "NOT MODELLED: the ₹50,000 graduate rate. One benefit_value per scheme; benefit_note carries the higher figure as text.",
+    "TO CONFIRM: minimum and maximum age. The official page states none for any of the marriage schemes, which is surprising and probably means the detail lives in the government order rather than the web page.",
+    "TO CONFIRM: the documents list. None is given on the official page."
+  ]
+}
