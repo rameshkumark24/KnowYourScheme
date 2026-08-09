@@ -10,7 +10,7 @@
 import readline from 'node:readline';
 import fs from 'node:fs';
 import path from 'node:path';
-import { evaluate } from './src/engine.js';
+import { evaluate, deriveProfile } from './src/engine.js';
 
 const SCHEMES_DIR = path.join(import.meta.dirname, 'data/schemes');
 
@@ -76,7 +76,9 @@ function reportScheme(scheme, trace) {
   }
 }
 
-function report(profile) {
+function report(storedProfile) {
+  // The stored profile holds dob and children[]; rules read age and the child aggregates.
+  const profile = deriveProfile(storedProfile);
   const schemes = loadSchemes();
   const results = [];
 

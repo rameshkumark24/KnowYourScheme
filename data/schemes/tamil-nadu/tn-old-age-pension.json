@@ -1,0 +1,97 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-old-age-pension",
+  "name": "Old Age Pension",
+  "full_name": "Indira Gandhi National Old Age Pension Scheme (Tamil Nadu)",
+  "level": "state",
+  "state": "TN",
+  "summary": "A monthly pension for destitute people aged 60 and over.",
+
+  "benefit_value": 1200,
+  "benefit_period": "month",
+  "benefit_type": "grant",
+  "benefit_note": "₹1,200 a month. For ages 60 to 79 this is ₹200 from the centre and ₹1,000 from the state; from 80 it is ₹500 and ₹700.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://cra.tn.gov.in/",
+  "source_url": "https://cra.tn.gov.in/about_schemes_t.php",
+  "official_video_url": null,
+
+  "documents": [
+    "aadhaar_card",
+    "income_certificate",
+    "bank_passbook",
+    "residence_proof",
+    "ration_card"
+  ],
+
+  "how_to_apply": [
+    "Apply at your Village Administrative Officer, Gram Panchayat or Urban Local Body office.",
+    "The Revenue Department verifies your circumstances.",
+    "Once approved, the pension is credited to your bank account each month."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "aged-60-or-over",
+        "field": "age",
+        "op": "gte",
+        "value": 60,
+        "label": "Aged 60 or over",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are {user_value}, and this pension starts at {threshold}.",
+        "fail_template": "You are {user_value}. This pension starts at {threshold}.",
+        "source_quote": "60 years and above"
+      },
+      {
+        "id": "is-destitute",
+        "field": "is_destitute",
+        "op": "equals",
+        "value": true,
+        "label": "Destitute — no regular means of support",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This pension is for people with no regular means of support.",
+        "fail_template": "This pension is for people who are destitute, with no regular means of support.",
+        "source_quote": "Destitute"
+      },
+      {
+        "id": "below-poverty-line",
+        "field": "is_bpl",
+        "op": "equals",
+        "value": true,
+        "label": "From a below poverty line family",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are from a below poverty line family, which this pension requires.",
+        "fail_template": "This pension is for people from below poverty line families.",
+        "source_quote": "Belonging to below poverty line family"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "TRANSLATION WARNING. The amounts come from the TAMIL version of the Commissionerate of Revenue Administration page (cra.tn.gov.in/about_schemes_t.php), read through automatic translation on 2026-08-09. The English page 404s. A Tamil reader must check these figures directly — this is the weakest sourcing in the corpus.",
+    "Eligibility wording is cross-checked against an official district portal (karur.nic.in social security schemes), which gives the same three conditions: 60 years and above, destitute, below poverty line.",
+    "LEVEL IS SET TO STATE, not central, even though this is a centrally co-sponsored scheme. The ₹1,200 figure is the Tamil Nadu combined rate including the state top-up, so the file describes the Tamil Nadu version. Revisit if the corpus ever covers another state.",
+    "TO CONFIRM: whether is_bpl should instead be derived from ration_card_type. AAY and PHH cards indicate below poverty line status in Tamil Nadu, so asking a separate question may be redundant — but the mapping is not certain enough to hard-code.",
+    "TO CONFIRM: the documents list. Not given on the official page.",
+    "The benefit does not change at 80 — only the central/state split does. benefit_value is correct for all ages."
+  ]
+}

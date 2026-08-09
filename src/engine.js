@@ -25,6 +25,48 @@ const formatSentence = (template, userValue, threshold) => {
   return fill(fill(template, '{user_value}', userValue), '{threshold}', threshold);
 };
 
+// Today in India, not in UTC. Between 00:00 and 05:30 IST the UTC date is still yesterday,
+// which would keep a scheme open for one extra night past its deadline.
+const todayInIndia = () =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+
+/**
+ * Fills in the fields that are computed rather than asked.
+ *
+ * The stored profile holds `dob` and `children[]`. Rules read `age`, `girl_child_count` and
+ * `has_only_girl_children`. Call this on the stored profile before evaluating anything —
+ * the engine does not derive, it only reads, so a profile passed in raw silently produces
+ * UNKNOWN for every derived field.
+ *
+ * `today` is injectable so tests do not depend on the clock.
+ */
+const deriveProfile = (profile, today = todayInIndia()) => {
+  const derived = { ...profile };
+
+  if (profile.dob) {
+    const [y, m, d] = profile.dob.split('-').map(Number);
+    const [ty, tm, td] = today.split('-').map(Number);
+    let age = ty - y;
+    if (tm < m || (tm === m && td < d)) age--;
+    derived.age = age;
+  }
+
+  if (Array.isArray(profile.children)) {
+    derived.child_count = profile.children.length;
+    derived.girl_child_count = profile.children.filter((c) => c.child_gender === 'female').length;
+    // "All of your children are girls" — a family with no children does not qualify.
+    derived.has_only_girl_children =
+      derived.child_count > 0 && derived.girl_child_count === derived.child_count;
+  }
+
+  return derived;
+};
+
 const GROUP_KEYS = ['all', 'any', 'none'];
 
 /**
@@ -72,6 +114,17 @@ const evaluateOp = (userVal, op, threshold) => {
 const evaluateCondition = (node, profile) => {
   if (node.field) {
     // Leaf node
+    //
+    // Per-child evaluation is designed but NOT built. A `child_*` field would read undefined
+    // off the flat profile and quietly return UNKNOWN, which reads on screen as "answer a few
+    // more questions" for a scheme the family may already qualify for. Refuse instead.
+    if (node.field.startsWith('child_')) {
+      throw new Error(
+        `Criterion "${node.id}" reads "${node.field}". Per-child rule evaluation is not implemented — ` +
+          `derive an aggregate field over children[] instead. See docs/profile-fields.md.`
+      );
+    }
+
     const userVal = profile[node.field];
     if (userVal === undefined || userVal === null) {
       return { state: 'UNKNOWN', userVal };
@@ -167,16 +220,6 @@ const getFirstLeaf = (traceNode) => {
   }
   return traceNode;
 };
-
-// Today in India, not in UTC. Between 00:00 and 05:30 IST the UTC date is still yesterday,
-// which would keep a scheme open for one extra night past its deadline.
-const todayInIndia = () =>
-  new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'Asia/Kolkata',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit'
-  }).format(new Date());
 
 const evaluate = (profile, scheme, evaluated_on = todayInIndia()) => {
   const checks = [];
@@ -299,4 +342,4 @@ const evaluate = (profile, scheme, evaluated_on = todayInIndia()) => {
   };
 };
 
-export { evaluate };
+export { evaluate, deriveProfile };

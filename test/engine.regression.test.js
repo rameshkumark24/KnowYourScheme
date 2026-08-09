@@ -6,7 +6,7 @@
  */
 import test from 'node:test';
 import assert from 'node:assert';
-import { evaluate } from '../src/engine.js';
+import { evaluate, deriveProfile } from '../src/engine.js';
 
 const scheme = (rules) => ({
   id: 'regression-fixture',
@@ -176,6 +176,47 @@ test('a closed scheme is not returned at all', () => {
   closed.scheme_status = 'closed';
 
   assert.strictEqual(evaluate({ annual_income: 1 }, closed, '2026-08-09'), null);
+});
+
+test('deriveProfile computes age from dob, including the not-yet-had-a-birthday case', () => {
+  assert.strictEqual(deriveProfile({ dob: '1984-03-12' }, '2026-08-09').age, 42);
+  assert.strictEqual(deriveProfile({ dob: '1984-12-12' }, '2026-08-09').age, 41);
+  assert.strictEqual(deriveProfile({ dob: '1984-08-09' }, '2026-08-09').age, 42, 'birthday today');
+  assert.strictEqual(deriveProfile({ dob: '1984-08-10' }, '2026-08-09').age, 41, 'birthday tomorrow');
+});
+
+test('deriveProfile counts children and answers has_only_girl_children', () => {
+  const twoGirls = deriveProfile({
+    children: [{ child_gender: 'female' }, { child_gender: 'female' }]
+  });
+  assert.strictEqual(twoGirls.child_count, 2);
+  assert.strictEqual(twoGirls.girl_child_count, 2);
+  assert.strictEqual(twoGirls.has_only_girl_children, true);
+
+  const mixed = deriveProfile({ children: [{ child_gender: 'female' }, { child_gender: 'male' }] });
+  assert.strictEqual(mixed.girl_child_count, 1);
+  assert.strictEqual(mixed.has_only_girl_children, false);
+
+  const none = deriveProfile({ children: [] });
+  assert.strictEqual(none.has_only_girl_children, false, 'no children is not "only girls"');
+});
+
+test('deriveProfile leaves a profile without dob or children alone', () => {
+  const out = deriveProfile({ gender: 'female' });
+  assert.strictEqual(out.age, undefined);
+  assert.strictEqual(out.child_count, undefined);
+  assert.strictEqual(out.gender, 'female');
+});
+
+test('a rule reading a child_* field throws instead of silently returning UNKNOWN', () => {
+  const childRule = scheme({
+    all: [crit({ id: 'child-in-college', field: 'child_education_stage', op: 'equals', value: 'college' })]
+  });
+
+  assert.throws(
+    () => evaluate({ children: [{ child_education_stage: 'college' }] }, childRule, '2026-08-09'),
+    /Per-child rule evaluation is not implemented/
+  );
 });
 
 test('a false or zero answer is answered, not unknown', () => {

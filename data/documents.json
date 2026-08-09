@@ -82,6 +82,12 @@
       "where_to_get": "Registrar of Marriages"
     },
     {
+      "id": "disability_certificate",
+      "label": "Disability certificate",
+      "note": "States the assessed percentage. Issued by a government medical board.",
+      "where_to_get": "District Differently Abled Welfare Office, or a government medical board"
+    },
+    {
       "id": "class_12_marksheet",
       "label": "Class 12 marksheet",
       "where_to_get": "Your school, or your board's results portal"

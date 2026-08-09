@@ -65,6 +65,9 @@ biggest cause of abandonment.
 | `disability_percent` | number | `0`–`100` |
 | `ration_card_type` | enum | `aay` · `phh` · `nphh` · `none` |
 | `owns_house` | boolean | |
+| `is_destitute` | boolean | No regular means of support. Read by all three pension schemes. |
+| `is_bpl` | boolean | From a below poverty line family |
+| `immovable_property_value` | number | Rupees. `0` if none. |
 | `household_has_lpg_connection` | boolean | Any LPG connection from any oil company in the household |
 | `is_poor_household_declared` | boolean | Willing to sign the deprivation declaration in the prescribed format |
 | `has_vending_certificate` | boolean | Certificate of Vending or ULB identity card |
@@ -100,8 +103,15 @@ the question, and the help text under it, with that in mind.
 | --- | --- | --- |
 | `is_orphan` | boolean | Marriage Assistance for Orphan Girls |
 | `is_intercaste_marriage` | boolean | Inter-Caste Marriage Assistance |
+| `has_disability`, `disability_percent` | boolean, number | Differently Abled Pension |
+| `is_destitute` | boolean | All three pension schemes |
 
-Both follow the sensitive-field rules below. Neither goes in the general wizard.
+These follow the sensitive-field rules below. None goes in the general wizard.
+
+`is_destitute` needs particular care in wording. "Are you destitute?" is a question that asks
+someone to describe themselves in a word most people would not accept. Ask what the department
+actually means — whether they have any regular means of support — and use the department's term
+only in the explanation of the result.
 
 ## Tier 3 — the exclusion screen
 
@@ -134,8 +144,26 @@ appear in the parent's results.
 | `child_class_or_year` | number | Class 1–12, or year of college |
 | `child_school_type` | enum | `government` · `aided` · `private` |
 
-A rule that reads a `child_*` field is evaluated **once per child**, and the result names
-which child it applies to.
+**A rule may not reference a `child_*` field today.** The engine throws if one does.
+
+Evaluating a rule once per child, and naming which child it applies to, is the intended
+design — but it is not built. Until it is, a scheme that depends on a child's circumstances
+has two options:
+
+- **Derive an aggregate** over `children[]`, as `girl_child_count` and `has_only_girl_children` do.
+  Cheap, but it loses which child qualified, so the card cannot say *"your younger daughter
+  qualifies"*.
+- **Model it on the student's own profile** if they are 18 or over. Pudhumai Penn and Tamil
+  Pudhalvan both do this, because college students usually are.
+
+Neither covers a scheme for a school-age child that must be claimed by the parent. That is
+the case that needs real per-child evaluation, and it should be built before any such scheme
+is curated — not worked around a third time.
+
+**Do not compose two aggregates to fake it.** "Has a daughter in college" AND "has a daughter
+who went to a government school" is true for a family whose daughter A is in college after
+private school and whose daughter B went to a government school and is not in college. That
+is a false positive, and false positives are the thing this product exists to avoid.
 
 ---
 
