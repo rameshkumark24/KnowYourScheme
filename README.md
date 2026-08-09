@@ -29,16 +29,37 @@ question box all read the trace.
 
 ## Tech stack
 
-> **Build step 1 is still open.** Decided so far:
->
-> - **No backend, no database.** Static hosting (GitHub Pages / Netlify / Cloudflare Pages).
-> - **Rule engine is plain JavaScript running in the browser** — `src/engine.js`.
-> - **Scheme data is JSON in this repo**, shipped as a static bundle.
-> - The auto-update bot (step 24) and the validation script (step 26) run as **scheduled
->   GitHub Actions**. Nothing of ours runs while a user is on the site.
->
-> Still to pick: the frontend framework, and which of the three hosts. `src/` currently holds
-> only the engine, which has no framework dependency either way.
+> **React + Vite, plain JavaScript with JSDoc, plain CSS with custom properties, deployed as a
+> static site to Cloudflare Pages. No backend, no database.**
+
+Decided 9 Aug 2026, build step 1. **This does not change again.**
+
+| Layer | Choice | Why |
+| --- | --- | --- |
+| Frontend | React + Vite | Whatever Risvanth gets stuck on, help is one search away. One person owns the whole frontend and cannot afford to be blocked. |
+| Language | JavaScript + JSDoc | No compile step, nothing new to learn. JSDoc still gives editor autocomplete on the trace shape. |
+| Styling | Plain CSS + custom properties | Six screens do not need a framework. One file holds the colour and spacing system, checked against WCAG AA once. |
+| Rule engine | Plain JavaScript, in the browser | `src/engine.js`. No framework dependency — it is imported, not wired in. |
+| Scheme data | JSON in this repo | Shipped as a static bundle. Edited by pull request. |
+| Backend | None | |
+| Database | None | |
+| Hosting | Cloudflare Pages | Edge locations inside India, so Tamil Nadu users hit a nearby server. Free, deploys on push. |
+| Automation | GitHub Actions | The step 24 bot and the step 26 validator run on a schedule. Nothing of ours runs while a user is on the site. |
+
+### The budget this buys you
+
+React costs roughly 45KB gzipped before a line of your own code — about a third of the
+under-three-seconds target on a mid-range Android over 4G. That is affordable, not free.
+Three things protect it, and they are cheapest done from the first screen:
+
+- **Code-split the screens.** The landing page and the profile wizard are the only things
+  needed for a first result. Scheme detail, the document checklist and the question box load on demand.
+- **Load the scheme bundle separately from the app.** It grows every time someone curates a scheme.
+- **Add a service worker before the demo.** UX principles promise the app works offline once
+  scheme data has loaded, and that promise needs one. `vite-plugin-pwa` is the usual way.
+
+Measure it on a real phone on real 4G before Review 3 and put the number on a slide. No
+competitor paper reports one.
 
 ---
 

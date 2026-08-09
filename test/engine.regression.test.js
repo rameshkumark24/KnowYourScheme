@@ -4,9 +4,9 @@
  * These use synthetic schemes on purpose — they exercise format features PM-KISAN happens
  * not to use, which is exactly where the bugs were hiding.
  */
-const test = require('node:test');
-const assert = require('node:assert');
-const { evaluate } = require('../src/engine');
+import test from 'node:test';
+import assert from 'node:assert';
+import { evaluate } from '../src/engine.js';
 
 const scheme = (rules) => ({
   id: 'regression-fixture',

@@ -1,7 +1,9 @@
-const test = require('node:test');
-const assert = require('node:assert');
-const { execSync } = require('child_process');
-const path = require('path');
+import test from 'node:test';
+import assert from 'node:assert';
+import { execSync } from 'node:child_process';
+import path from 'node:path';
+
+const __dirname = import.meta.dirname;
 
 test('Schema validation: pm-kisan.json', (t) => {
   const schemaPath = path.join(__dirname, '../data/schema/scheme.schema.json');

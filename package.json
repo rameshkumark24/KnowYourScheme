@@ -2,6 +2,7 @@
   "name": "knowyourscheme",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "description": "Welfare scheme eligibility checker — rule engine and scheme data. No backend, no database, no AI model.",
   "license": "UNLICENSED",
   "scripts": {

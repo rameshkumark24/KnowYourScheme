@@ -299,6 +299,4 @@ const evaluate = (profile, scheme, evaluated_on = todayInIndia()) => {
   };
 };
 
-module.exports = {
-  evaluate
-};
+export { evaluate };

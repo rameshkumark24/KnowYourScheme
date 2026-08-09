@@ -63,6 +63,11 @@ Profile (browser)  →  Rule engine  →  Verdict + trace  →  Templates  →  
 
 Runs client-side. Scheme corpus is a static JSON bundle. No application server.
 
+**Stack, fixed 9 Aug 2026 and not revisited:** React + Vite, plain JavaScript with JSDoc,
+plain CSS with custom properties, static deploy to Cloudflare Pages. No backend, no database.
+ES modules everywhere — `src/engine.js` is imported by both the browser app and the Node tests.
+Full rationale in [README.md](README.md).
+
 ---
 
 ## Scheme JSON shape

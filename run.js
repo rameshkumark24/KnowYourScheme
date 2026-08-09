@@ -7,12 +7,12 @@
  *
  * A profile may leave any field out — the engine treats a missing field as UNKNOWN.
  */
-const readline = require('readline');
-const fs = require('fs');
-const path = require('path');
-const { evaluate } = require('./src/engine');
+import readline from 'node:readline';
+import fs from 'node:fs';
+import path from 'node:path';
+import { evaluate } from './src/engine.js';
 
-const SCHEME_PATH = path.join(__dirname, 'data/schemes/central/pm-kisan.json');
+const SCHEME_PATH = path.join(import.meta.dirname, 'data/schemes/central/pm-kisan.json');
 
 const QUESTIONS = [
   ['owns_agricultural_land', 'bool', 'Does your family own agricultural land?'],

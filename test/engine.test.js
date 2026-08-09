@@ -1,8 +1,10 @@
-const test = require('node:test');
-const assert = require('node:assert');
-const fs = require('fs');
-const path = require('path');
-const { evaluate } = require('../src/engine');
+import test from 'node:test';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { evaluate } from '../src/engine.js';
+
+const __dirname = import.meta.dirname;
 
 const pmKisan = JSON.parse(fs.readFileSync(path.join(__dirname, '../data/schemes/central/pm-kisan.json'), 'utf8'));
 const synthetic = JSON.parse(fs.readFileSync(path.join(__dirname, 'fixtures/synthetic-fixable-scheme.json'), 'utf8'));
