@@ -8,6 +8,7 @@
   "summary": "THIS IS A TEST FIXTURE. Not real scheme data.",
   "benefit_value": 1000,
   "benefit_period": "month",
+  "benefit_type": "grant",
   "effort_level": "EASY",
   "official_fee": 0,
   "is_rolling": true,

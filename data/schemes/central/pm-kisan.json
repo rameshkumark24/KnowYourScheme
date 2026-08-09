@@ -10,6 +10,7 @@
 
   "benefit_value": 6000,
   "benefit_period": "year",
+  "benefit_type": "grant",
   "benefit_note": "Paid as three equal instalments of ₹2,000.",
   "effort_level": "MEDIUM",
   "official_fee": 0,

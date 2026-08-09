@@ -45,7 +45,19 @@ the rule came from — this is what makes a pull-request diff reviewable in 30 s
 | --- | --- | --- |
 | `benefit_value` | number \| null | Rupees. `null` only for non-cash benefits. |
 | `benefit_period` | `"year"` \| `"month"` \| `"one_time"` | Used by ranking to normalise |
+| `benefit_type` | `"grant"` \| `"loan"` \| `"subsidy"` \| `"insurance"` \| `"in_kind"` | See below |
 | `benefit_note` | string \| null | Free text for detail that is not a single number |
+
+**`benefit_type` exists because ranking would otherwise lie.** PM SVANidhi's first tranche is
+₹15,000 and PM-KISAN is ₹6,000 a year. Sorted on the number alone, a loan the user has to pay
+back in twelve months outranks a grant they keep — and it would sit at the top of the results
+screen looking like the best thing available.
+
+Ranking rules by type:
+
+- `grant`, `subsidy` — rank on `benefit_value` as-is
+- `loan` — never ranked above a grant on value. It is money borrowed, not money received.
+- `insurance`, `in_kind` — a cover amount is not cash in hand; rank below grants of the same figure
 | `effort_level` | `"EASY"` \| `"MEDIUM"` \| `"HARD"` | Fixed rubric, see below |
 | `official_fee` | number | `0` for free. Shown so users can spot someone overcharging. |
 
@@ -197,6 +209,15 @@ to explain the whole group including its carve-out.
 - age, gender, category, district
 - paid income tax last year
 - holds a constitutional post
+
+**`fixable` is not "can this change" — it is "would we tell someone to change it".**
+
+The Girl Child Protection Scheme requires that a parent has been sterilised before turning 40.
+That is technically an action a person could take. It is marked `fixable: false`, and it always
+will be. The `fix_hint` is shown to the user as a suggestion, and there are things this product
+must never suggest.
+
+When the two readings disagree, `fixable` follows the second one.
 
 **Gap analysis must show these differently.** "You are one document away" is useful.
 "You are one unchangeable fact away" is a dead end dressed up as hope, and UX principle 3

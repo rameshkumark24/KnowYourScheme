@@ -1,0 +1,100 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "pm-svanidhi",
+  "name": "PM SVANidhi",
+  "full_name": "Pradhan Mantri Street Vendor's AtmaNirbhar Nidhi",
+  "level": "central",
+  "state": null,
+  "summary": "A working capital loan for street vendors, with no collateral and an interest subsidy.",
+
+  "benefit_value": 15000,
+  "benefit_period": "one_time",
+  "benefit_type": "loan",
+  "benefit_note": "First loan of up to ₹15,000 repaid over 12 months. Repay on time and the next is up to ₹25,000 over 18 months, then up to ₹50,000 over 36 months. Interest subsidy of 7% a year, credited quarterly. No penalty for repaying early.",
+  "effort_level": "MEDIUM",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://pmsvanidhi.mohua.gov.in/",
+  "source_url": "https://pmsvanidhi.mohua.gov.in/Home/Schemes",
+  "official_video_url": null,
+
+  "documents": [
+    "aadhaar_card",
+    "vending_certificate",
+    "bank_passbook"
+  ],
+
+  "how_to_apply": [
+    "If you do not have a Certificate of Vending, apply to your Urban Local Body — or to the Block Development Office if you vend in a census town or peri-urban area.",
+    "The Letter of Recommendation is issued within 15 days of applying.",
+    "Apply for the loan on the PM SVANidhi portal, or through a lending institution.",
+    "Repay the first loan on time to unlock the larger second and third loans."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "is-street-vendor",
+        "field": "occupation",
+        "op": "equals",
+        "value": "street_vendor",
+        "label": "Works as a street vendor",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You work as a street vendor, which is who this scheme is for.",
+        "fail_template": "This loan is only for street vendors.",
+        "source_quote": "The target beneficiaries of the scheme are street vendors vending in various city-regions."
+      }
+    ],
+
+    "any": [
+      {
+        "id": "holds-vending-certificate",
+        "field": "has_vending_certificate",
+        "op": "equals",
+        "value": true,
+        "label": "Has a Certificate of Vending or ULB identity card",
+        "fixable": true,
+        "fix_hint": "Apply to your Urban Local Body or Town Vending Committee for a Certificate of Vending.",
+        "pass_template": "You hold a Certificate of Vending, which is what this loan needs.",
+        "fail_template": "You do not have a Certificate of Vending yet.",
+        "source_quote": "In statutory towns, the Certificate of Vending (CoV)/Identity Card/Letter of Recommendation (LoR) to the street vendors will be issued by TVC/ ULBs."
+      },
+      {
+        "id": "holds-letter-of-recommendation",
+        "field": "has_vending_letter_of_recommendation",
+        "op": "equals",
+        "value": true,
+        "label": "Has a Letter of Recommendation from the Block Development Office",
+        "fixable": true,
+        "fix_hint": "If you vend in a census town or peri-urban area, apply to the Block Development Office. The letter is issued within 15 days.",
+        "pass_template": "You hold a Letter of Recommendation, which is what this loan needs.",
+        "fail_template": "You do not have a Letter of Recommendation yet.",
+        "source_quote": "For census towns and peri urban areas, the Letter of Recommendation (LoR) to the street vendors will be issued by Block Development Offices after due verification as per Annexure A."
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the official Scheme Guidelines PDF linked at https://pmsvanidhi.mohua.gov.in/Home/Schemes, downloaded and read on 2026-08-09. Every source_quote is wording from that document.",
+    "LOAN AMOUNTS ARE ₹15,000 / ₹25,000 / ₹50,000. Several widely-copied secondary sources still say ₹10,000 / ₹20,000 / ₹50,000 — those are the original 2020 figures. The current guidelines say 15/25/50. Do not 'correct' this back.",
+    "THIS IS A LOAN, NOT A GRANT. benefit_type is loan for exactly this reason — ₹15,000 borrowed must never outrank a smaller grant in the results list.",
+    "The two `any` criteria are a genuine either/or from the guidelines: a Certificate of Vending in statutory towns, or a Letter of Recommendation in census towns and peri-urban areas. This is the first scheme in the corpus to use an `any` group.",
+    "TO CONFIRM: the documents list. The guidelines describe the loan process but do not give a document checklist. vending_certificate follows from the eligibility rule and bank_passbook from the loan being credited to an account, but confirm both.",
+    "TO CONFIRM: effort_level. MEDIUM assumes the vendor already holds a certificate. Someone starting without one needs an office visit, which is HARD by our rubric. The format cannot express an effort level that depends on the user's answers — worth raising if more schemes hit this.",
+    "The scheme only applies in states that have notified rules under the Street Vendors Act 2014. Tamil Nadu's status needs checking before this ships."
+  ]
+}

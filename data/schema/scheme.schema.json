@@ -8,7 +8,7 @@
 
   "required": [
     "id", "name", "full_name", "level", "state", "summary",
-    "benefit_value", "benefit_period", "effort_level", "official_fee",
+    "benefit_value", "benefit_period", "benefit_type", "effort_level", "official_fee",
     "is_rolling", "application_start", "application_end", "scheme_status",
     "application_url", "source_url", "documents", "how_to_apply",
     "common_pitfalls", "rules",
@@ -31,6 +31,10 @@
 
     "benefit_value": { "type": ["number", "null"], "minimum": 0 },
     "benefit_period": { "enum": ["year", "month", "one_time"] },
+    "benefit_type": {
+      "enum": ["grant", "loan", "subsidy", "insurance", "in_kind"],
+      "description": "Ranking must not treat a loan the user repays as equal to a grant they keep."
+    },
     "benefit_note": { "type": ["string", "null"] },
     "effort_level": { "enum": ["EASY", "MEDIUM", "HARD"] },
     "official_fee": { "type": "number", "minimum": 0 },

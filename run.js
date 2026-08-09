@@ -12,7 +12,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { evaluate } from './src/engine.js';
 
-const SCHEME_PATH = path.join(import.meta.dirname, 'data/schemes/central/pm-kisan.json');
+const SCHEMES_DIR = path.join(import.meta.dirname, 'data/schemes');
+
+const loadSchemes = () => {
+  const files = [];
+  const walk = (dir) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (entry.name.endsWith('.json')) files.push(full);
+    }
+  };
+  walk(SCHEMES_DIR);
+  return files.map((f) => JSON.parse(fs.readFileSync(f, 'utf8')));
+};
 
 const QUESTIONS = [
   ['owns_agricultural_land', 'bool', 'Does your family own agricultural land?'],
@@ -43,19 +56,10 @@ const parseNumber = (a) => {
   return n;
 };
 
-function report(profile) {
-  const scheme = JSON.parse(fs.readFileSync(SCHEME_PATH, 'utf8'));
-  const trace = evaluate(profile, scheme);
-
-  if (trace === null) {
-    console.log(`\n${scheme.name} is not open right now, so it is not shown at all.`);
-    return;
-  }
-
+function reportScheme(scheme, trace) {
   console.log(`\n=== ${scheme.name} — ${trace.verdict} ===`);
-  console.log(`checked on ${trace.evaluated_on}`);
   console.log(
-    `${trace.counts.passed} passed, ${trace.counts.failed} failed, ${trace.counts.unknown} unanswered\n`
+    `${trace.counts.passed} passed, ${trace.counts.failed} failed, ${trace.counts.unknown} unanswered`
   );
 
   const mark = { PASS: '[ok]  ', FAIL: '[no]  ', UNKNOWN: '[?]   ' };
@@ -66,15 +70,36 @@ function report(profile) {
   }
 
   if (trace.gap) {
-    console.log(`\n--- ${trace.gap.fixable ? 'ONE STEP AWAY' : 'JUST MISSED'} ---`);
-    console.log(trace.gap.sentence);
-    if (trace.gap.fix_hint) console.log(`How to fix: ${trace.gap.fix_hint}`);
-    if (trace.gap.distance) {
-      console.log(`Your value ${trace.gap.distance.user_value} vs limit ${trace.gap.distance.threshold}`);
-    }
+    console.log(`--- ${trace.gap.fixable ? 'ONE STEP AWAY' : 'JUST MISSED'} ---`);
+    console.log(`    ${trace.gap.sentence}`);
+    if (trace.gap.fix_hint) console.log(`    How to fix: ${trace.gap.fix_hint}`);
+  }
+}
+
+function report(profile) {
+  const schemes = loadSchemes();
+  const results = [];
+
+  for (const scheme of schemes) {
+    const trace = evaluate(profile, scheme);
+    if (trace === null) continue; // closed, or outside its application window
+    results.push({ scheme, trace });
   }
 
-  if (process.env.TRACE_JSON) console.log('\n' + JSON.stringify(trace, null, 2));
+  const order = ['ELIGIBLE', 'ALMOST_ELIGIBLE', 'NEEDS_MORE_INFO', 'NOT_ELIGIBLE'];
+  results.sort((a, b) => order.indexOf(a.trace.verdict) - order.indexOf(b.trace.verdict));
+
+  console.log(`\nChecked ${results.length} of ${schemes.length} schemes (the rest are not open today).`);
+  for (const verdict of order) {
+    const group = results.filter((r) => r.trace.verdict === verdict);
+    if (group.length) console.log(`  ${verdict}: ${group.map((r) => r.scheme.name).join(', ')}`);
+  }
+
+  for (const { scheme, trace } of results) reportScheme(scheme, trace);
+
+  if (process.env.TRACE_JSON) {
+    console.log('\n' + JSON.stringify(results.map((r) => r.trace), null, 2));
+  }
 }
 
 function readStdin() {

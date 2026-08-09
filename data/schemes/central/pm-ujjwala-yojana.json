@@ -1,0 +1,112 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "pm-ujjwala-yojana",
+  "name": "PM Ujjwala Yojana",
+  "full_name": "Pradhan Mantri Ujjwala Yojana 2.0",
+  "level": "central",
+  "state": null,
+  "summary": "A free cooking gas connection for women in poor households, with the first refill and a stove included.",
+
+  "benefit_value": 2050,
+  "benefit_period": "one_time",
+  "benefit_type": "subsidy",
+  "benefit_note": "₹2,050 towards a 14.2kg connection, or ₹1,300 for a 5kg connection. Covers the deposit, regulator, hose, consumer card and installation. The first refill and a stove are free.",
+  "effort_level": "MEDIUM",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.pmuy.gov.in/",
+  "source_url": "https://www.pmuy.gov.in/",
+  "official_video_url": null,
+
+  "documents": [
+    "aadhaar_card",
+    "ration_card",
+    "bank_passbook",
+    "residence_proof",
+    "deprivation_declaration"
+  ],
+
+  "how_to_apply": [
+    "Choose a gas company — Indian Oil, Bharat Gas or HP Gas — and open its Ujjwala application page.",
+    "Fill in the KYC form and the deprivation declaration.",
+    "Give your Aadhaar, address proof, ration card and bank account details.",
+    "Your nearest distributor verifies the application and issues the connection."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "applicant-is-woman",
+        "field": "gender",
+        "op": "equals",
+        "value": "female",
+        "label": "The connection is issued to a woman",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This connection is issued in a woman's name, and yours qualifies.",
+        "fail_template": "This connection can only be issued in the name of a woman in the household.",
+        "source_quote": "The applicant must be a woman who has attained 18 years of age."
+      },
+      {
+        "id": "applicant-is-adult",
+        "field": "age",
+        "op": "gte",
+        "value": 18,
+        "label": "Aged 18 or over",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You are {user_value}, over the minimum age of {threshold}.",
+        "fail_template": "You are {user_value}, and this scheme starts at {threshold}.",
+        "source_quote": "The applicant must be a woman who has attained 18 years of age."
+      },
+      {
+        "id": "poor-household-declaration",
+        "field": "is_poor_household_declared",
+        "op": "equals",
+        "value": true,
+        "label": "Deprivation declaration signed",
+        "fixable": true,
+        "fix_hint": "This is a form you sign at the LPG distributor when you apply. There is no certificate to collect first.",
+        "pass_template": "You can sign the deprivation declaration, which is what this scheme asks for.",
+        "fail_template": "This scheme needs a signed deprivation declaration in the prescribed format.",
+        "source_quote": "The adult woman must belong to a poor household based on submission of a deprivation declaration (as per prescribed format)."
+      }
+    ],
+
+    "none": [
+      {
+        "id": "household-already-has-lpg",
+        "field": "household_has_lpg_connection",
+        "op": "equals",
+        "value": true,
+        "label": "Household already has an LPG connection",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "Nobody in your household has an LPG connection yet.",
+        "fail_template": "This scheme is only for households with no existing LPG connection from any gas company.",
+        "source_quote": "There should be no other LPG connection from any Oil Marketing Company (OMC) within the same household."
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Benefit, eligibility and the documents list were taken from https://www.pmuy.gov.in/ on 2026-08-09. Every source_quote is wording from that page.",
+    "THIS IS UJJWALA 2.0. The old scheme listed qualifying household categories — SC/ST, AAY, PMAY, tea garden, forest dweller, islands. Those are NOT the current criteria. 2.0 is three things: an adult woman, no existing LPG connection in the household, and a deprivation declaration. Do not re-add the category list from an older source.",
+    "TO CONFIRM: effort_level is MEDIUM on the assumption that the distributor visit is needed to complete the connection. If the whole thing can be done online, change it to EASY.",
+    "TO ADD: common_pitfalls. Nothing on the official page supports one yet.",
+    "The benefit differs by cylinder size (₹2,050 for 14.2kg, ₹1,300 for 5kg). benefit_value holds the larger, and benefit_note carries both. If ranking ever needs the smaller figure, this needs revisiting."
+  ]
+}

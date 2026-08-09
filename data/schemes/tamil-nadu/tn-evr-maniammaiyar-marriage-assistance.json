@@ -1,0 +1,109 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-evr-maniammaiyar-marriage-assistance",
+  "name": "E.V.R. Maniammaiyar Marriage Assistance",
+  "full_name": "E.V.R. Maniammaiyar Ninaivu Marriage Assistance Scheme for Daughters of Poor Widows",
+  "level": "state",
+  "state": "TN",
+  "summary": "Money towards a daughter's marriage for widowed mothers on a low income.",
+
+  "benefit_value": 25000,
+  "benefit_period": "one_time",
+  "benefit_type": "grant",
+  "benefit_note": "₹25,000 with an 8 gram 22 carat gold coin. ₹50,000 if the daughter is a graduate.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswomen-welfare/marriage-assistance-schemes",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationswomen-welfare/marriage-assistance-schemes",
+  "official_video_url": null,
+
+  "documents": [
+    "death_certificate",
+    "income_certificate",
+    "marriage_proof",
+    "bank_passbook",
+    "residence_proof"
+  ],
+
+  "how_to_apply": [
+    "Collect your husband's death certificate, an income certificate and proof of the marriage.",
+    "Apply through the Social Welfare Office for your district.",
+    "The money is paid by ECS along with the gold coin."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "applicant-is-widow",
+        "field": "marital_status",
+        "op": "equals",
+        "value": "widowed",
+        "label": "The mother is a widow",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This scheme is for the daughters of widowed mothers.",
+        "fail_template": "This scheme is only for the daughters of widowed mothers.",
+        "source_quote": "E.V.R. Maniammaiyar Marriage Assistance (for daughters of poor widows)"
+      },
+      {
+        "id": "applicant-is-mother",
+        "field": "gender",
+        "op": "equals",
+        "value": "female",
+        "label": "Applied for by the mother",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This assistance is claimed by the mother.",
+        "fail_template": "This assistance is claimed by the widowed mother of the bride.",
+        "source_quote": "for daughters of poor widows"
+      },
+      {
+        "id": "has-a-daughter",
+        "field": "girl_child_count",
+        "op": "gte",
+        "value": 1,
+        "label": "Has at least one daughter",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You have a daughter, which this scheme is for.",
+        "fail_template": "This scheme is for the marriage of a daughter.",
+        "source_quote": "for daughters of poor widows"
+      },
+      {
+        "id": "family-income-limit",
+        "field": "annual_income",
+        "op": "lte",
+        "value": 120000,
+        "label": "Annual family income of ₹1,20,000 or less",
+        "fixable": true,
+        "fix_hint": "Income is assessed from your income certificate. A fresh certificate from the e-Sevai centre will reflect your current income.",
+        "pass_template": "Your family income is ₹{user_value}, within the ₹{threshold} limit.",
+        "fail_template": "Your family income is ₹{user_value}, above the ₹{threshold} limit for this scheme.",
+        "source_quote": "annual income of the family should not exceed Rs.1,20,000"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department marriage assistance page on 2026-08-09. That page describes six different marriage assistance schemes; this file is only the one for daughters of poor widows. The other five are separate schemes and each needs its own file.",
+    "TO CONFIRM: the minimum age of the bride. The official page does not state one, and no rule has been written for it rather than guess. It almost certainly exists — 18 is the legal minimum age of marriage — so find it and add the rule.",
+    "TO CONFIRM: the documents list. The official page lists none. All five here are inferred from the stated conditions and none is quoted.",
+    "NOT MODELLED: the ₹50,000 rate for a daughter who is a graduate. The format has one benefit_value per scheme and cannot express a benefit that varies by the answer. benefit_note carries it as text. If more schemes do this, the format needs a benefit tiers concept.",
+    "NOT MODELLED: that a marriage is actually taking place. Nothing in the profile captures an upcoming wedding, so this scheme will match every widowed mother on a low income with a daughter. That is a false positive and needs either a profile field or a note on the card before it ships.",
+    "The scheme reaches the daughter through the mother's profile, which is the same parent-applies pattern as the child schemes."
+  ]
+}

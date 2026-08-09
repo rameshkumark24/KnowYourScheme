@@ -48,6 +48,38 @@
       "id": "mobile_number",
       "label": "A mobile number you can receive OTPs on",
       "note": "Needed for eKYC on most central portals."
+    },
+    {
+      "id": "deprivation_declaration",
+      "label": "Deprivation declaration",
+      "note": "A self-declaration in the prescribed format. Filled in at the LPG distributor, not obtained beforehand.",
+      "where_to_get": "Your LPG distributor"
+    },
+    {
+      "id": "vending_certificate",
+      "label": "Certificate of Vending, ULB identity card, or Letter of Recommendation",
+      "note": "Issued by the Town Vending Committee or Urban Local Body in towns, or by the Block Development Office in census towns and peri-urban areas.",
+      "where_to_get": "Your Urban Local Body, or the Block Development Office"
+    },
+    {
+      "id": "birth_certificate",
+      "label": "Birth certificate",
+      "where_to_get": "Municipal corporation, or the town or village panchayat"
+    },
+    {
+      "id": "sterilisation_certificate",
+      "label": "Sterilisation certificate",
+      "where_to_get": "The government hospital or primary health centre that performed it"
+    },
+    {
+      "id": "death_certificate",
+      "label": "Death certificate of the spouse",
+      "where_to_get": "Municipal corporation, or the town or village panchayat"
+    },
+    {
+      "id": "marriage_proof",
+      "label": "Marriage invitation or marriage certificate",
+      "where_to_get": "Registrar of Marriages"
     }
   ]
 }

@@ -1,0 +1,123 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+
+  "id": "tn-girl-child-protection",
+  "name": "Girl Child Protection Scheme",
+  "full_name": "Chief Minister's Girl Child Protection Scheme",
+  "level": "state",
+  "state": "TN",
+  "summary": "A deposit in your daughter's name that she receives when she turns 18, for families with only girl children.",
+
+  "benefit_value": 50000,
+  "benefit_period": "one_time",
+  "benefit_type": "grant",
+  "benefit_note": "₹50,000 deposited for a family with one girl child, or ₹25,000 for each of two girl children. Paid out when she turns 18. An annual incentive of ₹1,800 is paid from the sixth year of the deposit.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+
+  "application_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationschild-welfare/chief-ministers-girl-child-protection-scheme",
+  "source_url": "https://www.tnsocialwelfare.tn.gov.in/en/specilisationschild-welfare/chief-ministers-girl-child-protection-scheme",
+  "official_video_url": null,
+
+  "documents": [
+    "birth_certificate",
+    "income_certificate",
+    "sterilisation_certificate",
+    "bank_passbook",
+    "residence_proof"
+  ],
+
+  "how_to_apply": [
+    "Collect your daughter's birth certificate, an income certificate and the sterilisation certificate.",
+    "Apply through the Social Welfare Office or the child development office for your area.",
+    "The deposit is made in your daughter's name and renewed every five years.",
+    "She claims the matured amount when she turns 18."
+  ],
+
+  "common_pitfalls": [],
+
+  "rules": {
+    "all": [
+      {
+        "id": "family-income-limit",
+        "field": "annual_income",
+        "op": "lte",
+        "value": 120000,
+        "label": "Annual family income of ₹1,20,000 or less",
+        "fixable": true,
+        "fix_hint": "Income is assessed from your income certificate. If yours is out of date, a fresh one from the e-Sevai centre will reflect your current income.",
+        "pass_template": "Your family income is ₹{user_value}, within the ₹{threshold} limit.",
+        "fail_template": "Your family income is ₹{user_value}, above the ₹{threshold} limit for this scheme.",
+        "source_quote": "Annual income limit: Rs.1,20,000"
+      },
+      {
+        "id": "only-girl-children",
+        "field": "has_only_girl_children",
+        "op": "equals",
+        "value": true,
+        "label": "All the children in the family are girls",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "All the children in your family are girls, which is what this scheme is for.",
+        "fail_template": "This scheme is only for families whose children are all girls.",
+        "source_quote": "The scheme applies specifically to families with either one or two girl children"
+      },
+      {
+        "id": "one-or-two-girls",
+        "field": "girl_child_count",
+        "op": "in",
+        "value": [1, 2],
+        "label": "One or two girl children",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "You have {user_value} girl children, which this scheme covers.",
+        "fail_template": "This scheme covers families with one or two girl children.",
+        "source_quote": "Scheme-I ... for families with one girl child only. Scheme-II ... for families with two girl children only."
+      },
+      {
+        "id": "parent-sterilised",
+        "field": "parent_sterilised",
+        "op": "equals",
+        "value": true,
+        "label": "One parent has undergone sterilisation",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This scheme requires that one parent has undergone sterilisation, which applies in your case.",
+        "fail_template": "This scheme requires that one parent has undergone sterilisation.",
+        "source_quote": "Sterilization: Required from at least one parent"
+      },
+      {
+        "id": "sterilisation-age-limit",
+        "field": "parent_sterilisation_age",
+        "op": "lte",
+        "value": 40,
+        "label": "That parent was 40 or under at the time",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "The age condition of {threshold} or under is met.",
+        "fail_template": "This scheme requires the parent to have been {threshold} or under at the time.",
+        "source_quote": "the upper age limit for undergoing sterilization by either of the parents has been fixed as 40 years"
+      }
+    ]
+  },
+
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the Tamil Nadu Social Welfare Department page on 2026-08-09. Every source_quote is wording from that page.",
+    "SENSITIVE FIELDS. parent_sterilised and parent_sterilisation_age must never be asked in the general profile wizard — only inside this scheme's own flow, with a visible reason and an easy skip. See docs/profile-fields.md.",
+    "parent_sterilised and sterilisation-age-limit are deliberately fixable:false. Sterilisation is technically an action a person could take, and this product must never suggest it. fixable answers 'would we tell someone to do this', not 'could they'.",
+    "TO CONFIRM: whether the income limit is 'not exceeding' ₹1,20,000 (lte, as written here) or 'below' ₹1,20,000 (lt). The department's marriage assistance page words the same figure as 'should not exceed', so lte is the reasonable reading — but confirm on this scheme's own page.",
+    "TO CONFIRM: the documents list. The official page does not give one. The five listed follow from the stated conditions but none is quoted.",
+    "TO CONFIRM: the girl must 'appear for 10th standard public examination' according to the page. That reads as a condition on the payout rather than on applying, so it is not written as a rule. Check which it is — if it gates the application, it needs a rule and a child_* field.",
+    "benefit_value holds the ₹50,000 single-girl-child figure. A family with two girls gets ₹25,000 each, also ₹50,000 in total, so ranking is unaffected either way."
+  ]
+}

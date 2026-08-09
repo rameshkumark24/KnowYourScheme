@@ -26,6 +26,14 @@ Computed at evaluation time from stored fields. Rules may reference them; the fo
 | --- | --- | --- |
 | `age` | number | `dob` |
 | `child_count` | number | `children[]` |
+| `girl_child_count` | number | `children[]` where `child_gender` is `female` |
+| `has_only_girl_children` | boolean | `child_count > 0` and `girl_child_count === child_count` |
+
+`has_only_girl_children` is derived rather than asked because **rules compare a field to a
+constant, never to another field**. The Girl Child Protection Scheme needs "all of your
+children are girls", which is `girl_child_count === child_count` — not expressible as a rule.
+Deriving the comparison into a boolean keeps the rule language small. If a second scheme needs
+a different field-to-field comparison, derive that one too rather than extending the operators.
 
 ---
 
@@ -41,7 +49,7 @@ biggest cause of abandonment.
 | `annual_income` | number | Rupees, family income |
 | `category` | enum | `general` · `obc` · `sc` · `st` · `mbc` · `dnc` |
 | `district` | string | Tamil Nadu district name, or `other` |
-| `occupation` | enum | `farmer` · `daily_wage` · `self_employed` · `salaried` · `student` · `homemaker` · `unemployed` · `retired` |
+| `occupation` | enum | `farmer` · `daily_wage` · `self_employed` · `street_vendor` · `salaried` · `student` · `homemaker` · `unemployed` · `retired` |
 | `residence_type` | enum | `rural` · `urban` |
 
 ## Tier 2 — asked after the first results, to unlock more schemes
@@ -57,6 +65,15 @@ biggest cause of abandonment.
 | `disability_percent` | number | `0`–`100` |
 | `ration_card_type` | enum | `aay` · `phh` · `nphh` · `none` |
 | `owns_house` | boolean | |
+| `household_has_lpg_connection` | boolean | Any LPG connection from any oil company in the household |
+| `is_poor_household_declared` | boolean | Willing to sign the deprivation declaration in the prescribed format |
+| `has_vending_certificate` | boolean | Certificate of Vending or ULB identity card |
+| `has_vending_letter_of_recommendation` | boolean | Letter of Recommendation from a Block Development Office |
+| `parent_sterilised` | boolean | Either parent has undergone sterilisation |
+| `parent_sterilisation_age` | number | Age of that parent at the time |
+
+The last two are read only by the Girl Child Protection Scheme. Ask them **inside that
+scheme's flow**, not in the general wizard — see the note on sensitive fields below.
 
 ## Tier 3 — the exclusion screen
 
@@ -107,6 +124,22 @@ for — which is the exact problem this project exists to solve.
 See [trace-format.md](trace-format.md) for how `UNKNOWN` changes the verdict.
 
 ---
+
+## Sensitive fields
+
+Some schemes are gated on facts nobody should be asked casually. `parent_sterilised` and
+`parent_sterilisation_age` are the first, and there will be more — disability, widowhood,
+caste, HIV status all appear in real eligibility rules.
+
+Three rules for these:
+
+1. **Never in the general wizard.** Ask only when the user has opened the scheme that needs it.
+2. **Say why before asking.** "The Girl Child Protection Scheme asks this. You can skip it."
+3. **Skipping is a first-class answer.** It produces `UNKNOWN`, which reads as *needs more
+   info*, not *not eligible*.
+
+The profile never leaves the browser, which is what makes asking acceptable at all. It does
+not make asking in the wrong place acceptable.
 
 ## Adding a field
 
