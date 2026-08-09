@@ -82,6 +82,18 @@
       "where_to_get": "Registrar of Marriages"
     },
     {
+      "id": "udid_card",
+      "label": "National identity card for the differently abled (UDID card)",
+      "note": "Also called the national identity card for persons with disabilities. States the assessed percentage.",
+      "where_to_get": "District Differently Abled Welfare Office, or swavlambancard.gov.in"
+    },
+    {
+      "id": "medical_certificate",
+      "label": "Doctor's certificate",
+      "note": "Some schemes need a specific statement from the doctor — read the scheme's own requirement.",
+      "where_to_get": "A government hospital or your treating doctor"
+    },
+    {
       "id": "disability_certificate",
       "label": "Disability certificate",
       "note": "States the assessed percentage. Issued by a government medical board.",

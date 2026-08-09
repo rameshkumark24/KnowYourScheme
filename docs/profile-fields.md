@@ -63,6 +63,7 @@ biggest cause of abandonment.
 | `has_bank_account` | boolean | |
 | `has_disability` | boolean | |
 | `disability_percent` | number | `0`–`100` |
+| `disability_type` | enum | `intellectual` · `locomotor` · `visual` · `hearing` · `speech` · `muscular_dystrophy` · `leprosy_cured` · `multiple` · `other` |
 | `ration_card_type` | enum | `aay` · `phh` · `nphh` · `none` |
 | `owns_house` | boolean | |
 | `is_destitute` | boolean | No regular means of support. Read by all three pension schemes. |

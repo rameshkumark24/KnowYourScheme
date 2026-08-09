@@ -1,0 +1,72 @@
+{
+  "$schema": "../../schema/scheme.schema.json",
+  "level": "state",
+  "state": "TN",
+  "benefit_value": 1500,
+  "benefit_period": "month",
+  "benefit_type": "grant",
+  "benefit_note": "₹1,500 a month, sent by ECS directly to the applicant's bank account from the Treasury.",
+  "effort_level": "HARD",
+  "official_fee": 0,
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+  "application_url": "https://scd.tn.gov.in/Mintantance_allowance.php",
+  "source_url": "https://scd.tn.gov.in/Mintantance_allowance.php",
+  "official_video_url": null,
+  "how_to_apply": [
+    "Get the prescribed application form from your District Differently Abled Welfare Officer.",
+    "Attach your national identity card for the differently abled, your family card and your bank account details.",
+    "Submit the form to the District Differently Abled Welfare Officer."
+  ],
+  "common_pitfalls": [],
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "id": "tn-maintenance-allowance-muscular-dystrophy",
+  "name": "Maintenance Allowance (Muscular Dystrophy)",
+  "full_name": "Maintenance Allowance for Persons Affected with Muscular Dystrophy",
+  "summary": "₹1,500 a month for people affected by muscular dystrophy with 40% disability or more.",
+  "documents": [
+    "udid_card",
+    "ration_card",
+    "bank_passbook"
+  ],
+  "rules": {
+    "all": [
+      {
+        "id": "disability-type",
+        "field": "disability_type",
+        "op": "equals",
+        "value": "muscular_dystrophy",
+        "label": "Affected by muscular dystrophy",
+        "fixable": false,
+        "fix_hint": null,
+        "pass_template": "This allowance is for people affected by muscular dystrophy.",
+        "fail_template": "This allowance is for people affected by muscular dystrophy.",
+        "source_quote": "Persons should be affected with muscular dystrophy and percentage of disability 40% and above."
+      },
+      {
+        "id": "disability-percentage",
+        "field": "disability_percent",
+        "op": "gte",
+        "value": 40,
+        "label": "Disability assessed at 40% or more",
+        "fixable": true,
+        "fix_hint": "The percentage comes from a disability certificate issued by a government medical board. The District Differently Abled Welfare Office can arrange an assessment.",
+        "pass_template": "Your disability is assessed at {user_value}%, which meets the {threshold}% this allowance needs.",
+        "fail_template": "Your disability is assessed at {user_value}%, and this allowance needs {threshold}%.",
+        "source_quote": "percentage of disability 40% and above"
+      }
+    ]
+  },
+  "curation_notes": [
+    "DRAFT — not yet read by a human against the official page. Do not ship.",
+    "Taken from the English page of the Commissionerate for Welfare of the Differently Abled (scd.tn.gov.in) on 2026-08-09. Unlike the pension files, this source is the department's own English page and it lists the documents, so the sourcing here is strong.",
+    "The official page carries 'Last Update April 2024'. Amounts may have changed since; confirm before marking verified.",
+    "FOUR SEPARATE ALLOWANCES share this page, each with its own disability condition. They are not variants of one scheme and must not be merged. This is also why our sources appeared to disagree on the disability threshold: 40% here, more than 75% for severely affected, and different figures again for the Revenue Department pensions.",
+    "All four share the same three documents — UDID card, family card and bank details. That makes them the best demonstration in the corpus of the de-duplicated document checklist: three documents unlock four schemes."
+  ]
+}
