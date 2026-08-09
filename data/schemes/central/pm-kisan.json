@@ -123,8 +123,8 @@
             "label": "Monthly pension of ₹10,000 or more",
             "fixable": false,
             "fix_hint": null,
-            "pass_template": "Your monthly pension is {user_value}, below the {threshold} cut-off for this exclusion.",
-            "fail_template": "This scheme excludes retired pensioners drawing {threshold} a month or more, and yours is {user_value}.",
+            "pass_template": "Your monthly pension is ₹{user_value}, below the ₹{threshold} cut-off for this exclusion.",
+            "fail_template": "This scheme excludes retired pensioners drawing ₹{threshold} a month or more, and yours is ₹{user_value}.",
             "source_quote": "Retired pensioners with monthly pensions of ₹10,000 or more"
           },
           {

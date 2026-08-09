@@ -121,8 +121,8 @@ groups nest to any depth.
   "label": "Annual income below ₹2,50,000",
   "fixable": false,
   "fix_hint": null,
-  "pass_template": "Your income is {user_value}, below the {threshold} limit.",
-  "fail_template": "Your income is {user_value}, above the {threshold} limit for this scheme.",
+  "pass_template": "Your income is ₹{user_value}, below the ₹{threshold} limit.",
+  "fail_template": "Your income is ₹{user_value}, above the ₹{threshold} limit for this scheme.",
   "source_quote": "annual family income should not exceed Rs. 2,50,000"
 }
 ```
@@ -150,7 +150,15 @@ operator means an engine change **and** a test — do not add one casually.
 ### Placeholders in templates
 
 Only two are allowed: `{user_value}` and `{threshold}`. Both are filled from the trace,
-never generated. The renderer formats them (₹, lakh grouping, dates); the file stores raw values.
+never generated. Either may appear more than once in a sentence.
+
+**The unit belongs in the template, not in the engine.** Write `₹{user_value}`,
+`{user_value} acres`, `{user_value}%`. The engine only groups digits the Indian way
+(`280000` → `2,80,000`); it never adds a symbol.
+
+This is not a style preference. An engine that guesses the unit from the field name renders
+a five-acre limit as "₹5", and the only person who knows what the number means is whoever
+read the official page — which is the same reason we store `source_quote`.
 
 **This is the mechanism that makes an explanation impossible to get wrong.** If a number is
 not in the trace, it cannot appear in a sentence.

@@ -1,65 +1,142 @@
+/**
+ * Manual tester for the rule engine. Development tool, not part of the product.
+ *
+ *   node run.js                        prompt for answers
+ *   echo '{"owns_agricultural_land":true}' | node run.js
+ *   node run.js --profile my.json
+ *
+ * A profile may leave any field out — the engine treats a missing field as UNKNOWN.
+ */
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 const { evaluate } = require('./src/engine');
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-});
+const SCHEME_PATH = path.join(__dirname, 'data/schemes/central/pm-kisan.json');
 
-const ask = (question) => new Promise(resolve => rl.question(question, resolve));
+const QUESTIONS = [
+  ['owns_agricultural_land', 'bool', 'Does your family own agricultural land?'],
+  ['is_institutional_landholder', 'bool', 'Is the land held by an institution rather than a person?'],
+  ['holds_constitutional_post', 'bool', 'Do you hold, or have you held, a constitutional post?'],
+  ['is_government_employee', 'bool', 'Are you a serving or retired government or PSU employee?'],
+  ['government_employee_grade', 'text', "Employee grade? (group_a / group_b / group_c / group_d_mts / not_applicable)"],
+  ['monthly_pension_amount', 'number', 'Monthly pension amount in rupees?'],
+  ['paid_income_tax_last_year', 'bool', 'Did you pay income tax in the last assessment year?'],
+  ['is_registered_professional', 'bool', 'Are you a registered practising professional (doctor, lawyer, CA)?']
+];
 
-async function run() {
-  console.log("=== PM-KISAN Interactive Tester ===");
-  console.log("Answer 'y' for Yes, 'n' for No. Leave blank for UNKNOWN.\n");
+const parseBool = (a) => {
+  const s = a.trim().toLowerCase();
+  if (s.startsWith('y')) return true;
+  if (s.startsWith('n')) return false;
+  return undefined; // blank -> UNKNOWN
+};
 
-  const parseBool = (answer) => {
-    if (answer.toLowerCase().startsWith('y')) return true;
-    if (answer.toLowerCase().startsWith('n')) return false;
-    return undefined; // Maps to UNKNOWN in the engine
-  };
+const parseNumber = (a) => {
+  const s = a.trim();
+  if (!s) return undefined;
+  const n = Number(s);
+  if (!Number.isFinite(n)) {
+    console.error(`  "${s}" is not a number — recording it as unanswered.`);
+    return undefined;
+  }
+  return n;
+};
 
-  const profile = {};
+function report(profile) {
+  const scheme = JSON.parse(fs.readFileSync(SCHEME_PATH, 'utf8'));
+  const trace = evaluate(profile, scheme);
 
-  let ans = await ask("1. Does your family own agricultural land? (y/n): ");
-  profile.owns_agricultural_land = parseBool(ans);
+  if (trace === null) {
+    console.log(`\n${scheme.name} is not open right now, so it is not shown at all.`);
+    return;
+  }
 
-  ans = await ask("2. Is the land held by an institution? (y/n): ");
-  profile.is_institutional_landholder = parseBool(ans);
+  console.log(`\n=== ${scheme.name} — ${trace.verdict} ===`);
+  console.log(`checked on ${trace.evaluated_on}`);
+  console.log(
+    `${trace.counts.passed} passed, ${trace.counts.failed} failed, ${trace.counts.unknown} unanswered\n`
+  );
 
-  ans = await ask("3. Do you hold or have you held a constitutional post? (y/n): ");
-  profile.holds_constitutional_post = parseBool(ans);
+  const mark = { PASS: '[ok]  ', FAIL: '[no]  ', UNKNOWN: '[?]   ' };
+  for (const check of trace.checks) {
+    const name = check.type === 'group' ? `${check.group_op} group` : check.criterion_id;
+    console.log(`${mark[check.result]}${name}`);
+    if (check.sentence) console.log(`        ${check.sentence}`);
+  }
 
-  ans = await ask("4. Are you a serving or retired government/PSU employee? (y/n): ");
-  profile.is_government_employee = parseBool(ans);
+  if (trace.gap) {
+    console.log(`\n--- ${trace.gap.fixable ? 'ONE STEP AWAY' : 'JUST MISSED'} ---`);
+    console.log(trace.gap.sentence);
+    if (trace.gap.fix_hint) console.log(`How to fix: ${trace.gap.fix_hint}`);
+    if (trace.gap.distance) {
+      console.log(`Your value ${trace.gap.distance.user_value} vs limit ${trace.gap.distance.threshold}`);
+    }
+  }
 
-  ans = await ask("5. What is your employee grade? (e.g., type 'group_d_mts' or 'not_applicable'): ");
-  profile.government_employee_grade = ans.trim() || undefined;
-
-  ans = await ask("6. What is your monthly pension amount? (enter number or leave blank): ");
-  profile.monthly_pension_amount = ans.trim() ? parseInt(ans, 10) : undefined;
-
-  ans = await ask("7. Did you pay income tax in the last assessment year? (y/n): ");
-  profile.paid_income_tax_last_year = parseBool(ans);
-
-  ans = await ask("8. Are you a registered practising professional (doctor, lawyer, etc)? (y/n): ");
-  profile.is_registered_professional = parseBool(ans);
-
-  rl.close();
-
-  console.log("\nEvaluating profile against PM-KISAN...");
-  const pmKisan = JSON.parse(fs.readFileSync(path.join(__dirname, 'data/schemes/central/pm-kisan.json'), 'utf8'));
-  const trace = evaluate(profile, pmKisan);
-
-  console.log("\n=== VERDICT ===");
-  console.log(trace.verdict);
-
-  console.log("\n=== GAP ANALYSIS ===");
-  console.log(JSON.stringify(trace.gap, null, 2));
-
-  console.log("\n=== FULL TRACE OUTPUT ===");
-  console.log(JSON.stringify(trace.checks, null, 2));
+  if (process.env.TRACE_JSON) console.log('\n' + JSON.stringify(trace, null, 2));
 }
 
-run();
+function readStdin() {
+  return new Promise((resolve, reject) => {
+    let raw = '';
+    process.stdin.setEncoding('utf8');
+    process.stdin.on('data', (c) => (raw += c));
+    process.stdin.on('end', () => resolve(raw));
+    process.stdin.on('error', reject);
+  });
+}
+
+async function interactive() {
+  const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
+
+  // Without this, EOF leaves rl.question pending forever, the process exits 0, and the
+  // caller sees no output and no error. Fail loudly instead.
+  let closedEarly = false;
+  rl.on('close', () => (closedEarly = true));
+
+  const ask = (q) =>
+    new Promise((resolve, reject) => {
+      if (closedEarly) return reject(new Error('input ended before all questions were answered'));
+      rl.question(q, resolve);
+      rl.once('close', () => reject(new Error('input ended before all questions were answered')));
+    });
+
+  console.log('=== PM-KISAN tester ===');
+  console.log("y = yes, n = no, blank = leave unanswered\n");
+
+  const profile = {};
+  for (let i = 0; i < QUESTIONS.length; i++) {
+    const [field, kind, text] = QUESTIONS[i];
+    const suffix = kind === 'bool' ? ' (y/n)' : '';
+    const answer = await ask(`${i + 1}. ${text}${suffix}: `);
+    if (kind === 'bool') profile[field] = parseBool(answer);
+    else if (kind === 'number') profile[field] = parseNumber(answer);
+    else profile[field] = answer.trim() || undefined;
+  }
+
+  rl.close();
+  report(profile);
+}
+
+async function main() {
+  const fileArg = process.argv.indexOf('--profile');
+  if (fileArg !== -1) {
+    const file = process.argv[fileArg + 1];
+    if (!file) throw new Error('--profile needs a path to a JSON file');
+    return report(JSON.parse(fs.readFileSync(file, 'utf8')));
+  }
+
+  if (!process.stdin.isTTY) {
+    const raw = (await readStdin()).trim();
+    if (!raw) throw new Error('nothing on stdin. Pass a JSON profile, or run in a terminal to be prompted.');
+    return report(JSON.parse(raw));
+  }
+
+  return interactive();
+}
+
+main().catch((err) => {
+  console.error(`\nrun.js: ${err.message}`);
+  process.exit(1);
+});

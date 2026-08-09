@@ -2,25 +2,48 @@
  * Welfare Scheme Eligibility Checker - Rule Engine
  */
 
-const formatValue = (field, val) => {
-  if (typeof val === 'number') {
-    if (field === 'age' || field.includes('age_')) return val.toString();
-    return '₹' + val.toLocaleString('en-IN');
-  }
-  if (typeof val === 'boolean') {
-    return val ? 'Yes' : 'No';
-  }
-  if (Array.isArray(val)) {
-    return val.join(', ');
-  }
+/**
+ * Renders a value for display. Digit grouping only — no unit is added.
+ *
+ * The unit belongs in the template text ("₹{user_value}", "{user_value} acres"), because
+ * only the person who read the official page knows what the number means. Guessing the unit
+ * from the field name is how "8 acres" becomes "₹8".
+ */
+const formatValue = (val) => {
+  if (typeof val === 'number') return val.toLocaleString('en-IN');
+  if (typeof val === 'boolean') return val ? 'Yes' : 'No';
+  if (Array.isArray(val)) return val.join(', ');
   return String(val);
 };
 
-const formatSentence = (template, field, userValue, threshold) => {
+// split/join, not replace: a template may use a placeholder more than once, and a string
+// replacement would also interpret $& / $' in the value.
+const fill = (text, token, value) => text.split(token).join(formatValue(value));
+
+const formatSentence = (template, userValue, threshold) => {
   if (!template) return null;
-  return template
-    .replace('{user_value}', formatValue(field, userValue))
-    .replace('{threshold}', formatValue(field, threshold));
+  return fill(fill(template, '{user_value}', userValue), '{threshold}', threshold);
+};
+
+const GROUP_KEYS = ['all', 'any', 'none'];
+
+/**
+ * A rule group must use exactly one of all / any / none.
+ *
+ * Throwing is deliberate. Picking the first key and ignoring the rest would drop real
+ * eligibility rules with no visible symptom — the site would keep working and quietly give
+ * the wrong answer. The validation script (step 26) catches this before merge; this is the
+ * backstop that should never fire.
+ */
+const groupOpOf = (node) => {
+  const present = GROUP_KEYS.filter((k) => Array.isArray(node[k]));
+  if (present.length === 1) return present[0];
+  if (present.length === 0) {
+    throw new Error(`Rule node has neither a field nor a rule group: ${JSON.stringify(node).slice(0, 120)}`);
+  }
+  throw new Error(
+    `A rule group must use exactly one of all/any/none — found ${present.join(', ')}. Nest them instead.`
+  );
 };
 
 const evaluateOp = (userVal, op, threshold) => {
@@ -58,8 +81,7 @@ const evaluateCondition = (node, profile) => {
   }
 
   // Group node
-  const groupOp = node.all ? 'all' : node.any ? 'any' : node.none ? 'none' : null;
-  if (!groupOp) throw new Error("Invalid group node");
+  const groupOp = groupOpOf(node);
 
   const children = node[groupOp].map(child => {
     const evaluated = evaluateCondition(child, profile);
@@ -103,9 +125,9 @@ const buildTraceNode = (node, evalCtx, contextGroup) => {
   if (node.field) {
     // Leaf
     let sentence = null;
-    if (result === 'PASS') sentence = formatSentence(node.pass_template, node.field, evalCtx.userVal, node.value);
-    if (result === 'FAIL') sentence = formatSentence(node.fail_template, node.field, evalCtx.userVal, node.value);
-    
+    if (result === 'PASS') sentence = formatSentence(node.pass_template, evalCtx.userVal, node.value);
+    if (result === 'FAIL') sentence = formatSentence(node.fail_template, evalCtx.userVal, node.value);
+
     return {
       criterion_id: node.id,
       group: contextGroup,
@@ -122,7 +144,7 @@ const buildTraceNode = (node, evalCtx, contextGroup) => {
   }
 
   // Group
-  const groupOp = node.all ? 'all' : node.any ? 'any' : node.none ? 'none' : null;
+  const groupOp = groupOpOf(node);
   const traceChildren = evalCtx.children.map(childCtx => buildTraceNode(childCtx.node, childCtx, contextGroup));
   
   // Convention: group's sentence is its first child's sentence.
@@ -146,7 +168,17 @@ const getFirstLeaf = (traceNode) => {
   return traceNode;
 };
 
-const evaluate = (profile, scheme, evaluated_on = new Date().toISOString().split('T')[0]) => {
+// Today in India, not in UTC. Between 00:00 and 05:30 IST the UTC date is still yesterday,
+// which would keep a scheme open for one extra night past its deadline.
+const todayInIndia = () =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Kolkata',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(new Date());
+
+const evaluate = (profile, scheme, evaluated_on = todayInIndia()) => {
   const checks = [];
   const counts = { passed: 0, failed: 0, unknown: 0 };
   const blocking = [];
@@ -158,11 +190,20 @@ const evaluate = (profile, scheme, evaluated_on = new Date().toISOString().split
     if (scheme.application_end && evaluated_on > scheme.application_end) return null;
   }
 
-  // Evaluate top-level units
-  for (const groupKey of ['all', 'any', 'none']) {
-    if (!scheme.rules[groupKey]) continue;
+  // Evaluate top-level units.
+  //
+  // `all` and `none` list independent requirements, so each entry is its own blocking unit.
+  // `any` is a SINGLE requirement satisfied by any one member ("SC/ST or income below X"),
+  // so the whole bucket is one unit. Counting its members separately would report a user who
+  // satisfies the requirement as almost eligible, and one who satisfies none of it as failing
+  // several things at once.
+  for (const groupKey of GROUP_KEYS) {
+    const bucket = scheme.rules[groupKey];
+    if (!bucket) continue;
 
-    for (const rule of scheme.rules[groupKey]) {
+    const units = groupKey === 'any' ? [{ any: bucket }] : bucket;
+
+    for (const rule of units) {
       const evalCtx = evaluateCondition(rule, profile);
       const traceNode = buildTraceNode(rule, evalCtx, groupKey);
       

@@ -1,0 +1,12 @@
+{
+  "name": "knowyourscheme",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Welfare scheme eligibility checker — rule engine and scheme data. No backend, no database, no AI model.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test test/engine.test.js test/engine.regression.test.js test/validate.test.js",
+    "test:engine": "node --test test/engine.test.js test/engine.regression.test.js",
+    "start": "node run.js"
+  }
+}
