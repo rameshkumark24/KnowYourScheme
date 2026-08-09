@@ -51,8 +51,12 @@ income tax is good for this user.
 ```
 
 `sentence` is the criterion's `pass_template` or `fail_template` with `{user_value}` and
-`{threshold}` substituted and formatted. **Both values are copied from this check.** No number
-in a sentence has any other source — that is why an explanation cannot be wrong.
+`{threshold}` substituted. **Both values are copied from this check.** No number in a sentence
+has any other source — that is why an explanation cannot be wrong.
+
+The engine only groups digits (`280000` → `2,80,000`). Units and symbols come from the
+template, because the field name does not say whether a number is rupees, acres or a
+percentage. See [scheme-format.md](scheme-format.md).
 
 ### A nested group
 
@@ -88,7 +92,13 @@ Checked in this order. First match wins.
 | 3 | `failed == 1` | `ALMOST_ELIGIBLE` |
 | 4 | otherwise | `ELIGIBLE` |
 
-Counts are over **blocking units** — top-level entries, with a nested group counting as one.
+Counts are over **blocking units**:
+
+- each entry in top-level `all` is one unit — they are independent requirements
+- each entry in top-level `none` is one unit — they are independent exclusions
+- **the whole of top-level `any` is one unit** — "SC/ST *or* income below ₹X" is a single
+  requirement, satisfied by any one member
+- a nested group is one unit, however many children it has
 
 Two things about this order:
 

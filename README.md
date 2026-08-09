@@ -32,12 +32,31 @@ question box all read the trace.
 > **Build step 1 is still open.** Decided so far:
 >
 > - **No backend, no database.** Static hosting (GitHub Pages / Netlify / Cloudflare Pages).
-> - **Rule engine is plain JavaScript running in the browser.**
+> - **Rule engine is plain JavaScript running in the browser** — `src/engine.js`.
 > - **Scheme data is JSON in this repo**, shipped as a static bundle.
 > - The auto-update bot (step 24) and the validation script (step 26) run as **scheduled
 >   GitHub Actions**. Nothing of ours runs while a user is on the site.
 >
-> The frontend framework is not chosen yet. `src/` appears once step 1 closes.
+> Still to pick: the frontend framework, and which of the three hosts. `src/` currently holds
+> only the engine, which has no framework dependency either way.
+
+---
+
+## Running it
+
+```bash
+npm test                     # rule engine tests + schema validation
+npm run test:engine          # engine only, no network needed
+
+node run.js                  # answer questions, see the verdict and the trace
+echo '{"owns_agricultural_land":true}' | node run.js
+node run.js --profile some-profile.json
+TRACE_JSON=1 node run.js --profile some-profile.json   # full trace as JSON
+```
+
+There is no build step and nothing to install to run the engine tests. `npm test` also
+validates the scheme files against the JSON Schema, which pulls `ajv-cli` through `npx`
+and therefore needs a network connection the first time.
 
 ---
 
@@ -47,6 +66,11 @@ question box all read the trace.
 .
 ├── AGENTS.md                       Hard rules and conventions. Read this first.
 ├── README.md
+├── package.json                    Test scripts. No dependencies to run the engine.
+├── run.js                          Manual tester for the engine (development only)
+├── src/
+│   └── engine.js                   The rule engine
+├── test/                           Engine tests, regression tests, schema validation
 ├── docs/
 │   ├── scheme-format.md            The scheme JSON format  ← step 2 deliverable
 │   ├── trace-format.md             What the rule engine must emit

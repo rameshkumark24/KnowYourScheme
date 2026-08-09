@@ -1,0 +1,43 @@
+{
+  "$schema": "../../data/schema/scheme.schema.json",
+  "id": "test-synthetic-fixable",
+  "name": "Test Synthetic Scheme",
+  "full_name": "Test Synthetic Fixable Scheme",
+  "level": "state",
+  "state": "TN",
+  "summary": "THIS IS A TEST FIXTURE. Not real scheme data.",
+  "benefit_value": 1000,
+  "benefit_period": "month",
+  "effort_level": "EASY",
+  "official_fee": 0,
+  "is_rolling": true,
+  "application_start": null,
+  "application_end": null,
+  "scheme_status": "active",
+  "application_url": "https://example.gov.in/apply",
+  "source_url": "https://example.gov.in/",
+  "documents": ["income_certificate"],
+  "how_to_apply": ["Apply online."],
+  "common_pitfalls": [],
+  "rules": {
+    "all": [
+      {
+        "id": "income-below-limit",
+        "field": "annual_income",
+        "op": "lt",
+        "value": 250000,
+        "label": "Annual income below ₹2,50,000",
+        "fixable": true,
+        "fix_hint": "Get a fresh income certificate.",
+        "pass_template": "Your income is ₹{user_value}, below the ₹{threshold} limit.",
+        "fail_template": "Your income is ₹{user_value}, above the ₹{threshold} limit.",
+        "source_quote": "annual income < 2.5L"
+      }
+    ]
+  },
+  "curation_status": "draft",
+  "last_verified": null,
+  "verified_by": null,
+  "checked_by": null,
+  "curation_notes": ["TEST FIXTURE ONLY"]
+}

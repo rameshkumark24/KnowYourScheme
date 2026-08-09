@@ -99,8 +99,8 @@ That document is the source of truth — the sketch below is orientation only.
         "label": "Annual income below ₹2,50,000",
         "fixable": true,
         "fix_hint": "Get a fresh income certificate from the e-Sevai centre.",
-        "pass_template": "Your income is {user_value}, below the {threshold} limit.",
-        "fail_template": "Your income is {user_value}, above the {threshold} limit.",
+        "pass_template": "Your income is ₹{user_value}, below the ₹{threshold} limit.",
+        "fail_template": "Your income is ₹{user_value}, above the ₹{threshold} limit.",
         "source_quote": "annual family income should not exceed Rs. 2,50,000"
       }
     ],
