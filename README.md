@@ -29,15 +29,15 @@ question box all read the trace.
 
 ## Tech stack
 
-> **Build step 1 is still open.** Decided so far:
+> **Build step 5 (Rule Engine) is now complete.** Decided so far:
 >
 > - **No backend, no database.** Static hosting (GitHub Pages / Netlify / Cloudflare Pages).
-> - **Rule engine is plain JavaScript running in the browser.**
+> - **Rule engine is plain JavaScript running in the browser.** (Located in `src/engine.js`)
 > - **Scheme data is JSON in this repo**, shipped as a static bundle.
 > - The auto-update bot (step 24) and the validation script (step 26) run as **scheduled
 >   GitHub Actions**. Nothing of ours runs while a user is on the site.
 >
-> The frontend framework is not chosen yet. `src/` appears once step 1 closes.
+> The frontend framework is not chosen yet. For now, you can test the rule engine interactively by running `node run.js`.
 
 ---
 
@@ -47,6 +47,10 @@ question box all read the trace.
 .
 ├── AGENTS.md                       Hard rules and conventions. Read this first.
 ├── README.md
+├── run.js                          Interactive CLI to test the rule engine
+├── src/
+│   └── engine.js                   The core rule engine logic
+├── test/                           Rule engine and schema validation tests
 ├── docs/
 │   ├── scheme-format.md            The scheme JSON format  ← step 2 deliverable
 │   ├── trace-format.md             What the rule engine must emit
